@@ -1,5 +1,7 @@
 # Kotlin Logo screensaver for macOS
 
+![Screensaver GIF](/docs/KotlinLogo.gif)
+
 ## Installation
 
 ### Configure parameters
