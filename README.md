@@ -37,3 +37,4 @@ xcodebuild -scheme KotlinLogos build
 * Move parameters to a proper ScreenSaver config
 * Optimize PNG sizes, consider using vector images
 * Create proper release builds
+* Support other platforms?
