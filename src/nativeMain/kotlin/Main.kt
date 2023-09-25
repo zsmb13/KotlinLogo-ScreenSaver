@@ -94,6 +94,8 @@ class BouncingLogo(
     private var xPos: Double
     private var yPos: Double
 
+    private val speed = SPEED * Random.nextDouble(0.9, 1.1)
+
     init {
         val margin = sqrt(LOGO_AREA.toDouble())
         xPos = Random.nextDouble(margin, screenWidth - margin)
@@ -118,8 +120,8 @@ class BouncingLogo(
     }
 
     fun animateOneFrame() {
-        xPos += xDelta * SPEED
-        yPos += yDelta * SPEED
+        xPos += xDelta * speed
+        yPos += yDelta * speed
 
         when {
             xDelta > 0 && right >= screenWidth -> {
