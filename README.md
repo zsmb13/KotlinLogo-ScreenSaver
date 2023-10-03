@@ -15,6 +15,7 @@ Release builds are currently not signed, however you can install an unsigned rel
 
    <details>
       <summary>See image</summary>
+      
       ![](/docs/install1.png)
    </details>
 
@@ -22,6 +23,7 @@ Release builds are currently not signed, however you can install an unsigned rel
 
    <details>
       <summary>See image</summary>
+      
       ![](/docs/install2.png)
    </details>
 
@@ -29,6 +31,7 @@ Release builds are currently not signed, however you can install an unsigned rel
 
    <details>
       <summary>See image</summary>
+
       ![](/docs/install3.png)
    </details>
 
