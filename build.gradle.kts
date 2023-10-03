@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+
 plugins {
     kotlin("multiplatform") version "1.9.10"
 }
@@ -7,10 +9,25 @@ repositories {
 }
 
 kotlin {
-    macosArm64("native") {
-        binaries.framework {
-            baseName = "logodemo"
+    val xcf = XCFramework("KotlinLogo")
+
+    val targets = listOf(macosX64(), macosArm64())
+    targets.forEach { target ->
+        target.binaries.framework {
+            binaryOption("bundleId", "co.zsmb.KotlinLogos")
+            baseName = "KotlinLogo"
             isStatic = true
+            xcf.add(this)
+        }
+    }
+
+    sourceSets {
+        val nativeMain by creating
+        val macosX64Main by getting {
+            dependsOn(nativeMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(nativeMain)
         }
     }
 }

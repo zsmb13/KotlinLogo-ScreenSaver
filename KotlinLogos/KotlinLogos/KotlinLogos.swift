@@ -1,6 +1,6 @@
 import ScreenSaver
 import Cocoa
-import logodemo
+import KotlinLogo
 
 class KotlinLogosView : ScreenSaverView {
 
