@@ -4,9 +4,7 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.AppKit.*
-import platform.Foundation.NSBundle
-import platform.Foundation.NSMakeRect
-import platform.Foundation.NSRect
+import platform.Foundation.*
 import platform.ScreenSaver.ScreenSaverView
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -35,17 +33,16 @@ abstract class KotlinScreenSaverView {
 }
 
 class KotlinLogosViewImpl : KotlinScreenSaverView() {
-    private val logos: List<BouncingLogo> by lazy {
-        List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle) }
-    }
+    private var logos: List<BouncingLogo> = emptyList()
 
     override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean, bundle: NSBundle) {
         super.init(screenSaverView, isPreview, bundle)
         screenSaverView.animationTimeInterval = 1 / 120.0
+        setupUserDefaultsObserver()
+        initLogos()
     }
 
     override fun draw(rect: CPointer<NSRect>) {
-        clearStage()
         logos.forEach(BouncingLogo::draw)
     }
 
@@ -54,9 +51,20 @@ class KotlinLogosViewImpl : KotlinScreenSaverView() {
         view.setNeedsDisplayInRect(view.frame)
     }
 
-    private fun clearStage() {
-        NSColor.blackColor.setFill()
-        NSRectFill(view.frame)
+    private val debouncer = Debouncer(500)
+
+    private fun setupUserDefaultsObserver() {
+        NSNotificationCenter.defaultCenter
+            .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
+                debouncer.execute {
+                    initLogos()
+                }
+            }
+    }
+
+    private fun initLogos() {
+        logos.forEach(BouncingLogo::dispose)
+        logos = List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle) }
     }
 }
 
@@ -170,5 +178,9 @@ class BouncingLogo(
             logoHeight = sqrt(area / (w / h))
             logoWidth = area / logoHeight
         }
+    }
+
+    fun dispose() {
+        imageView.removeFromSuperview()
     }
 }
