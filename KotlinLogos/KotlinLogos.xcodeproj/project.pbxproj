@@ -71,7 +71,7 @@
 			buildConfigurationList = EBBEE0C22ABDC9B80008AEF8 /* Build configuration list for PBXNativeTarget "KotlinLogos" */;
 			buildPhases = (
 				EBBEE0B42ABDC9B80008AEF8 /* Headers */,
-				EBA1F4A62ABE0F1C00BF9DD5 /* Comple Kotlin */,
+				EBA1F4A62ABE0F1C00BF9DD5 /* Compile Kotlin */,
 				EBBEE0B52ABDC9B80008AEF8 /* Sources */,
 				EBBEE0B62ABDC9B80008AEF8 /* Frameworks */,
 				EBBEE0B72ABDC9B80008AEF8 /* Resources */,
@@ -130,7 +130,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		EBA1F4A62ABE0F1C00BF9DD5 /* Comple Kotlin */ = {
+		EBA1F4A62ABE0F1C00BF9DD5 /* Compile Kotlin */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 12;
@@ -140,7 +140,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Comple Kotlin";
+			name = "Compile Kotlin";
 			outputFileListPaths = (
 			);
 			outputPaths = (

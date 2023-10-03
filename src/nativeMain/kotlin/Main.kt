@@ -5,7 +5,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.AppKit.*
 import platform.Foundation.NSBundle
-import platform.Foundation.NSLog
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSRect
 import platform.ScreenSaver.ScreenSaverView

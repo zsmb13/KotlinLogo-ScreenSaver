@@ -4,14 +4,37 @@
 
 ## Installation
 
-### Build the project
+### Use an unsigned release build
+
+Release builds are currently not signed, however you can install an unsigned release build by
+
+1. Download the latest release build from [Releases](https://github.com/zsmb13/KotlinLogo-ScreenSaver/releases).
+2. Unzip the downloaded file.
+3. Open `KotlinLogos.saver`, install it as prompted, this will take you to Screen Saver within System Settings.
+4. When selecting the screen saver, you'll be warned that Apple can not check it for malicious software. Choose "OK", and then select another screen saver to stop the popup from repeatedly showing up.
+
+   ![](/docs/install1.png)
+
+5. Go to Privacy & Security in System Settings, scroll down to Security, and click "Open Anyway" under the message about `KotlinLogos.saver`
+
+   ![](/docs/install2.png)
+
+6. Go back to Screen Saver, select the screensaver again, and choose "Open" which should now be available.
+
+   ![](/docs/install3.png)
+
+7. Enjoy!
+
+### Build it yourself
+
+Build the artifact:
 
 ```
 cd KotlinLogos
-xcodebuild -scheme KotlinLogos build
+xcodebuild -scheme KotlinLogosRelease build
 ```
 
-### Install the screensaver:
+Then, to install it:
 
 1. Locate the output file:
    * Open `KotlinLogos` in XCode, `Product -> Show Build Folder in Finder`, browse to `Products/Debug/KotlinLogos.saver`.
@@ -21,9 +44,12 @@ xcodebuild -scheme KotlinLogos build
    * Opening it to install it in System Settings OR
    * Manually copying it to `~/Library/Screen Savers/`
 
-### Configure parameters
+### Customize parameters
 
-Go to System Settings -> Screen Saver, select the screen saver, and then _Options_ to customize logo size, count, and speed.
+In System Settings -> Screen Saver, select the screen saver, and then choose _Options..._ to customize logo size, count, and speed.
+
+![Use the Options button](/docs/config1.png)
+![Customize parameters](/docs/config2.png)
 
 ### Backlog
 
