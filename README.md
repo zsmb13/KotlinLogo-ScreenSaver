@@ -2,11 +2,16 @@
 
 ![Screensaver GIF](/docs/KotlinLogo.gif)
 
+Logo size, count, and speed can be customized by going to System Settings, Screen Saver, and *Options...* with this screensaver selected.
+
+![Use the Options button](/docs/config1.png)
+![Customize parameters](/docs/config2.png)
+
 ## Installation
 
-### Use an unsigned release build
+Release builds are currently not signed and notarized, however you can still [install these builds](#use-an-unsigned-release-build) by following the steps below. Alternatively, you can [build the screensaver](#build-it-yourself) from source.
 
-Release builds are currently not signed, however you can install an unsigned release build by
+### Use an unsigned release build
 
 1. Download the latest release build from [Releases](https://github.com/zsmb13/KotlinLogo-ScreenSaver/releases).
 2. Unzip the downloaded file.
@@ -55,16 +60,3 @@ Then, to install it:
 2. Install the screensaver by either
    * Opening it to install it in System Settings OR
    * Manually copying it to `~/Library/Screen Savers/`
-
-### Customize parameters
-
-In System Settings -> Screen Saver, select the screen saver, and then choose _Options..._ to customize logo size, count, and speed.
-
-![Use the Options button](/docs/config1.png)
-![Customize parameters](/docs/config2.png)
-
-### Backlog
-
-* Optimize PNG sizes, consider using vector images
-* Create proper release builds
-* Support other platforms?
