@@ -3,21 +3,15 @@
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
-import platform.AppKit.NSColor
-import platform.AppKit.NSImage
-import platform.AppKit.NSImageView
-import platform.AppKit.NSRectFill
-import platform.AppKit.imageForResource
+import platform.AppKit.*
 import platform.Foundation.NSBundle
+import platform.Foundation.NSLog
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSRect
 import platform.ScreenSaver.ScreenSaverView
+import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
-
-private const val LOGO_AREA = 300 * 300
-private const val LOGO_COUNT = 1
-private const val SPEED = 1.5
 
 fun create(): KotlinScreenSaverView = KotlinLogosViewImpl()
 
@@ -28,9 +22,13 @@ abstract class KotlinScreenSaverView {
     protected lateinit var bundle: NSBundle
         private set
 
+    protected var isPreview = false
+        private set
+
     open fun init(screenSaverView: ScreenSaverView, isPreview: Boolean, bundle: NSBundle) {
         this.view = screenSaverView
         this.bundle = bundle
+        this.isPreview = isPreview
     }
 
     abstract fun draw(rect: CPointer<NSRect>)
@@ -39,7 +37,7 @@ abstract class KotlinScreenSaverView {
 
 class KotlinLogosViewImpl : KotlinScreenSaverView() {
     private val logos: List<BouncingLogo> by lazy {
-        List(LOGO_COUNT) { BouncingLogo(view, bundle) }
+        List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle) }
     }
 
     override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean, bundle: NSBundle) {
@@ -85,8 +83,9 @@ class BouncingLogo(
     private var xDelta = if (Random.nextBoolean()) 1.0 else -1.0
     private var yDelta = if (Random.nextBoolean()) 1.0 else -1.0
 
-    private var logoWidth = 300.0
-    private var logoHeight = 300.0
+    // Initialized later based on image size
+    private var logoWidth = 0.0
+    private var logoHeight = 0.0
 
     private val screenWidth = view.frame.useContents { this.size.width }
     private val screenHeight = view.frame.useContents { this.size.height }
@@ -94,10 +93,13 @@ class BouncingLogo(
     private var xPos: Double
     private var yPos: Double
 
-    private val speed = SPEED * Random.nextDouble(0.9, 1.1)
+    // Magic numbers 🪄✨
+    private var pxScale = ((screenWidth / 1728) + (screenHeight / 1117)) / 2
+
+    private val speed = pxScale * Preferences.SPEED / 10.0 * Random.nextDouble(0.9, 1.1)
 
     init {
-        val margin = sqrt(LOGO_AREA.toDouble())
+        val margin = Preferences.LOGO_SIZE * pxScale
         xPos = Random.nextDouble(margin, screenWidth - margin)
         yPos = Random.nextDouble(margin, screenHeight - margin)
     }
@@ -165,8 +167,9 @@ class BouncingLogo(
     private fun loadImage(index: Int): NSImage {
         return bundle.imageForResource(images[index])!!.also { img ->
             val (w, h) = img.size.useContents { width to height }
-            logoHeight = sqrt(LOGO_AREA / (w / h))
-            logoWidth = LOGO_AREA / logoHeight
+            val area = (Preferences.LOGO_SIZE.toDouble() * pxScale).pow(2)
+            logoHeight = sqrt(area / (w / h))
+            logoWidth = area / logoHeight
         }
     }
 }

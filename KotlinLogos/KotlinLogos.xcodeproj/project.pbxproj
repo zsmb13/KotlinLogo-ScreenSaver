@@ -9,16 +9,12 @@
 /* Begin PBXBuildFile section */
 		EBBEE0C62ABDCA660008AEF8 /* KotlinLogos.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBEE0C52ABDCA660008AEF8 /* KotlinLogos.swift */; };
 		EBBEE0C82ABDF0580008AEF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBBEE0C72ABDF0580008AEF8 /* Assets.xcassets */; };
-		EBFE84E62AC039F3008DDB2D /* ConfigureSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFE84E52AC039F3008DDB2D /* ConfigureSheetController.swift */; };
-		EBFE84EA2AC03D22008DDB2D /* ConfigureSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBFE84E92AC03D22008DDB2D /* ConfigureSheet.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		EBBEE0B92ABDC9B80008AEF8 /* KotlinLogos.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KotlinLogos.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBBEE0C52ABDCA660008AEF8 /* KotlinLogos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotlinLogos.swift; sourceTree = "<group>"; };
 		EBBEE0C72ABDF0580008AEF8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		EBFE84E52AC039F3008DDB2D /* ConfigureSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureSheetController.swift; sourceTree = "<group>"; };
-		EBFE84E92AC03D22008DDB2D /* ConfigureSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigureSheet.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,8 +49,6 @@
 			children = (
 				EBBEE0C72ABDF0580008AEF8 /* Assets.xcassets */,
 				EBBEE0C52ABDCA660008AEF8 /* KotlinLogos.swift */,
-				EBFE84E52AC039F3008DDB2D /* ConfigureSheetController.swift */,
-				EBFE84E92AC03D22008DDB2D /* ConfigureSheet.xib */,
 			);
 			path = KotlinLogos;
 			sourceTree = "<group>";
@@ -129,7 +123,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBFE84EA2AC03D22008DDB2D /* ConfigureSheet.xib in Resources */,
 				EBBEE0C82ABDF0580008AEF8 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,7 +157,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBBEE0C62ABDCA660008AEF8 /* KotlinLogos.swift in Sources */,
-				EBFE84E62AC039F3008DDB2D /* ConfigureSheetController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

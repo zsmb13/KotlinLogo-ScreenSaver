@@ -4,17 +4,6 @@
 
 ## Installation
 
-### Configure parameters
-
-Configure parameters by editing the values at the top of `Main.kt`:
-
-* `LOGO_AREA`: logo size in square pixels
-  * `25 * 25` - `500 * 500`
-* `LOGO_COUNT`: the number of logos to display
-  * `1` - `1000`
-* `SPEED`: logo speed in pixels / frame
-  * `1.0` - `5.0`
-
 ### Build the project
 
 ```
@@ -32,9 +21,12 @@ xcodebuild -scheme KotlinLogos build
    * Opening it to install it in System Settings OR
    * Manually copying it to `~/Library/Screen Savers/`
 
+### Configure parameters
+
+Go to System Settings -> Screen Saver, select the screen saver, and then _Options_ to customize logo size, count, and speed.
+
 ### Backlog
 
-* Move parameters to a proper ScreenSaver config
 * Optimize PNG sizes, consider using vector images
 * Create proper release builds
 * Support other platforms?

@@ -3,6 +3,7 @@ import Cocoa
 import logodemo
 
 class KotlinLogosView : ScreenSaverView {
+
     let kotlinScreenSaverView = MainKt.create()
 
     override init?(frame: NSRect, isPreview: Bool) {
@@ -28,12 +29,14 @@ class KotlinLogosView : ScreenSaverView {
         kotlinScreenSaverView.animateOneFrame()
     }
     
+    lazy var sheetController: NSWindowController = ConfigKt.prefController()
+
     // Note to self, needs restart of Sys Preferences to take effect
     override var hasConfigureSheet: Bool {
-        return false
+        return true
     }
     
     override var configureSheet: NSWindow? {
-        return nil
+        return sheetController.window
     }
 }
