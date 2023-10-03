@@ -13,15 +13,24 @@ Release builds are currently not signed, however you can install an unsigned rel
 3. Open `KotlinLogos.saver`, install it as prompted, this will take you to Screen Saver within System Settings.
 4. When selecting the screen saver, you'll be warned that Apple can not check it for malicious software. Choose "OK", and then select another screen saver to stop the popup from repeatedly showing up.
 
-   ![](/docs/install1.png)
+   <details>
+      <summary>See image</summary>
+      ![](/docs/install1.png)
+   </details>
 
 5. Go to Privacy & Security in System Settings, scroll down to Security, and click "Open Anyway" under the message about `KotlinLogos.saver`
 
-   ![](/docs/install2.png)
+   <details>
+      <summary>See image</summary>
+      ![](/docs/install2.png)
+   </details>
 
 6. Go back to Screen Saver, select the screensaver again, and choose "Open" which should now be available.
 
-   ![](/docs/install3.png)
+   <details>
+      <summary>See image</summary>
+      ![](/docs/install3.png)
+   </details>
 
 7. Enjoy!
 
