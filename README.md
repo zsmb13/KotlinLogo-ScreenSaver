@@ -2,10 +2,14 @@
 
 ![Screensaver GIF](/docs/KotlinLogo.gif)
 
-Logo size, count, and speed can be customized by going to System Settings, Screen Saver, and *Options...* with this screensaver selected.
+Logo set, size, count, and speed can be customized by going to System Settings, Screen Saver, and *Options...* with this screensaver selected.
 
 ![Use the Options button](/docs/config1.png)
 ![Customize parameters](/docs/config2.png)
+
+Available image sets:
+* Kotlin logos
+* Kodee
 
 ## Installation
 
