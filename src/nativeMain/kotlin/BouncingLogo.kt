@@ -1,17 +1,20 @@
-@file:OptIn(ExperimentalForeignApi::class)
-
+import config.Preferences
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.AppKit.NSImage
+import platform.AppKit.NSImageScaleProportionallyUpOrDown
 import platform.AppKit.NSImageView
 import platform.AppKit.imageForResource
+import platform.CoreGraphics.CGColorCreateSRGB
 import platform.Foundation.NSBundle
 import platform.Foundation.NSMakeRect
 import platform.ScreenSaver.ScreenSaverView
+import util.debugLog
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
+@OptIn(ExperimentalForeignApi::class)
 class BouncingLogo(
     private val view: ScreenSaverView,
     private val bundle: NSBundle,
@@ -56,6 +59,12 @@ class BouncingLogo(
     private var index = Random.nextInt(images.size)
 
     private val imageView = NSImageView().apply {
+        if (Preferences.IS_DEBUG) {
+            wantsLayer = true
+            layer?.setBackgroundColor(CGColorCreateSRGB(1.0, 1.0, 1.0, 1.0))
+        }
+
+        imageScaling = NSImageScaleProportionallyUpOrDown
         image = loadImage(index)
         frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2, w = logoWidth, h = logoHeight)
         view.addSubview(this)
@@ -71,21 +80,25 @@ class BouncingLogo(
 
         when {
             xDelta > 0 && right >= screenWidth -> {
+                debugLog { "bounce(Right), $right (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
                 xDelta = -1.0
                 bounce(Side.Right)
             }
 
             yDelta > 0 && top >= screenHeight -> {
+                debugLog { "bounce(Top), $top (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
                 yDelta = -1.0
                 bounce(Side.Top)
             }
 
             xDelta < 0 && left <= 0 -> {
+                debugLog { "bounce(Left), $left (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
                 xDelta = 1.0
                 bounce(Side.Left)
             }
 
             yDelta < 0 && bottom <= 0 -> {
+                debugLog { "bounce(Bottom), $bottom (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
                 yDelta = 1.0
                 bounce(Side.Bottom)
             }
@@ -111,6 +124,7 @@ class BouncingLogo(
     private fun loadImage(index: Int): NSImage {
         return bundle.imageForResource(images[index])!!.also { img ->
             val (w, h) = img.size.useContents { width to height }
+            debugLog { "Loaded image ${images[index]}, w $w h $h" }
             val area = (Preferences.LOGO_SIZE.toDouble() * pxScale).pow(2)
             logoHeight = sqrt(area / (w / h))
             logoWidth = area / logoHeight

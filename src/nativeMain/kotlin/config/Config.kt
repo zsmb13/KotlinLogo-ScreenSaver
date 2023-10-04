@@ -1,5 +1,7 @@
-@file:OptIn(BetaInteropApi::class)
+package config
 
+import ImageSet
+import imageSets
 import kotlinx.cinterop.*
 import platform.AppKit.*
 import platform.Foundation.NSMakeRect

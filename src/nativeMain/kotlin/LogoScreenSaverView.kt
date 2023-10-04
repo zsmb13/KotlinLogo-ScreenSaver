@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalForeignApi::class)
 
+import config.Preferences
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSBundle
@@ -7,6 +8,7 @@ import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSRect
 import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.ScreenSaver.ScreenSaverView
+import util.Debouncer
 
 class LogoScreenSaverView : KotlinScreenSaverView() {
     private var logos: List<BouncingLogo> = emptyList()
@@ -27,7 +29,7 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
         view.setNeedsDisplayInRect(view.frame)
     }
 
-    private val debouncer = Debouncer(500)
+    private val debouncer = Debouncer(delayMs = 500)
 
     private fun setupUserDefaultsObserver() {
         NSNotificationCenter.defaultCenter

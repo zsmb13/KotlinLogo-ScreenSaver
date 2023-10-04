@@ -1,3 +1,5 @@
+package config
+
 import platform.Foundation.NSUserDefaults
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -7,6 +9,8 @@ object Preferences {
     var LOGO_SIZE by UserDefaultDelegate(200)
     var LOGO_COUNT by UserDefaultDelegate(1)
     var SPEED by UserDefaultDelegate(10)
+
+    const val IS_DEBUG = false
 }
 
 class UserDefaultDelegate(private val default: Long) : ReadWriteProperty<Any?, Int> {

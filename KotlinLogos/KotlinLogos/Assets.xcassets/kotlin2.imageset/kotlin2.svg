@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="1225.4506 376.1748 315.2773 315.2773" width="315.277px" height="315.277px" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(190.21346,176.91183,176.91183,-190.21346,911.44269,335.29529)" spreadMethod="pad" id="linearGradient80">
+      <stop style="stop-opacity:1;stop-color:#d54dc0" offset="0" id="stop74"/>
+      <stop style="stop-opacity:1;stop-color:#ff7700" offset="1" id="stop76"/>
+      <stop style="stop-opacity:1;stop-color:#ff7700" offset="1" id="stop78"/>
+    </linearGradient>
+    <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(144.76619,150.75194,150.75194,-144.76619,981.90369,223.70616)" spreadMethod="pad" id="linearGradient102">
+      <stop style="stop-opacity:1;stop-color:#d54dc0" offset="0" id="stop96"/>
+      <stop style="stop-opacity:1;stop-color:#009dff" offset="0.0027" id="stop98"/>
+      <stop style="stop-opacity:1;stop-color:#7f6ee8" offset="1" id="stop100"/>
+    </linearGradient>
+    <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(144.76619,150.75194,150.75194,-144.76619,834.27771,365.47049)" spreadMethod="pad" id="linearGradient124">
+      <stop style="stop-opacity:1;stop-color:#d54dc0" offset="0" id="stop118"/>
+      <stop style="stop-opacity:1;stop-color:#009dff" offset="0.0027" id="stop120"/>
+      <stop style="stop-opacity:1;stop-color:#7f6ee8" offset="1" id="stop122"/>
+    </linearGradient>
+  </defs>
+  <g id="g62" transform="matrix(1.3333332538604736, 0, 0, -1.3333332538604736, 0, 1066.666748046875)">
+    <g id="g64">
+      <g id="g70">
+        <g id="g72">
+          <path d="M 1042.163,517.869 919.088,394.794 V 281.411 l 236.458,236.458 z" style="fill:url(#linearGradient80);stroke:none" id="path82"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g id="g84" transform="matrix(1.3333332538604736, 0, 0, -1.3333332538604736, 0, 1066.666748046875)">
+    <g id="g86">
+      <g id="g92">
+        <g id="g94">
+          <path d="M 1155.546,281.411 1037.317,399.64 919.088,281.411 Z" style="fill:url(#linearGradient102);stroke:none" id="path104"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g id="g106" transform="matrix(1.3333332538604736, 0, 0, -1.3333332538604736, 0, 1066.666748046875)">
+    <g id="g108">
+      <g id="g114">
+        <g id="g116">
+          <path d="M 919.088,517.869 V 394.794 l 123.075,123.075 z" style="fill:url(#linearGradient124);stroke:none" id="path126"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

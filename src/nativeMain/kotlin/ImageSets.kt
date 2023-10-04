@@ -3,22 +3,22 @@ data class ImageSet(val name: String, val images: () -> List<String>)
 val imageSets = arrayOf(
     ImageSet("Kotlin logos") {
         listOf(
-            "kotlin0_10x",
-            "kotlin1_10x",
-            "kotlin2_10x",
-            "kotlin3_10x",
-            "kotlin4_10x",
+            "kotlin0",
+            "kotlin1",
+            "kotlin2",
+            "kotlin3",
+            "kotlin4",
         )
     },
     ImageSet("Kodee") {
         listOf(
-            "Kodee-greeting",
-            "Kodee-inlove",
-            "Kodee-jumping",
-            "Kodee-naughty",
-            "Kodee-sharing",
-            "Kodee-sitting",
-            "Kodee-waving",
+            "kodee-greeting",
+            "kodee-inlove",
+            "kodee-jumping",
+            "kodee-naughty",
+            "kodee-sharing",
+            "kodee-sitting",
+            "kodee-waving",
         ).shuffled()
     },
 )

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="1684.7945 375.9548 315.5973 315.5973" width="315.597px" height="315.597px" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-236.69836,-236.69836,236.69836,-236.69836,1500.2943,518.03436)" spreadMethod="pad" id="linearGradient148">
+      <stop style="stop-opacity:1;stop-color:#f73054" offset="0" id="stop140"/>
+      <stop style="stop-opacity:1;stop-color:#f73054" offset="0.0034" id="stop142"/>
+      <stop style="stop-opacity:1;stop-color:#d700e7" offset="0.4689" id="stop144"/>
+      <stop style="stop-opacity:1;stop-color:#8052ff" offset="1" id="stop146"/>
+    </linearGradient>
+  </defs>
+  <g id="g128" transform="matrix(1.3333332538604736, 0, 0, -1.3333332538604736, 0, 1066.666748046875)">
+    <g id="g130">
+      <g id="g136">
+        <g id="g138">
+          <path d="m 1500.294,281.336 h -236.698 v 236.698 h 236.698 L 1381.945,399.685 Z" style="fill:url(#linearGradient148);stroke:none" id="path150"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
