@@ -31,7 +31,6 @@ class KotlinLogosView : ScreenSaverView {
     
     lazy var sheetController: NSWindowController = ConfigKt.prefController()
 
-    // Note to self, needs restart of Sys Preferences to take effect
     override var hasConfigureSheet: Bool {
         return true
     }
