@@ -1,92 +1,29 @@
 @file:OptIn(ExperimentalForeignApi::class)
 
-import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
-import platform.AppKit.*
-import platform.Foundation.*
+import platform.AppKit.NSImage
+import platform.AppKit.NSImageView
+import platform.AppKit.imageForResource
+import platform.Foundation.NSBundle
+import platform.Foundation.NSMakeRect
 import platform.ScreenSaver.ScreenSaverView
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-fun create(): KotlinScreenSaverView = KotlinLogosViewImpl()
-
-abstract class KotlinScreenSaverView {
-    protected lateinit var view: ScreenSaverView
-        private set
-
-    protected lateinit var bundle: NSBundle
-        private set
-
-    protected var isPreview = false
-        private set
-
-    open fun init(screenSaverView: ScreenSaverView, isPreview: Boolean, bundle: NSBundle) {
-        this.view = screenSaverView
-        this.bundle = bundle
-        this.isPreview = isPreview
-    }
-
-    abstract fun draw(rect: CPointer<NSRect>)
-    abstract fun animateOneFrame()
-}
-
-class KotlinLogosViewImpl : KotlinScreenSaverView() {
-    private var logos: List<BouncingLogo> = emptyList()
-
-    override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean, bundle: NSBundle) {
-        super.init(screenSaverView, isPreview, bundle)
-        screenSaverView.animationTimeInterval = 1 / 120.0
-        setupUserDefaultsObserver()
-        initLogos()
-    }
-
-    override fun draw(rect: CPointer<NSRect>) {
-        logos.forEach(BouncingLogo::draw)
-    }
-
-    override fun animateOneFrame() {
-        logos.forEach(BouncingLogo::animateOneFrame)
-        view.setNeedsDisplayInRect(view.frame)
-    }
-
-    private val debouncer = Debouncer(500)
-
-    private fun setupUserDefaultsObserver() {
-        NSNotificationCenter.defaultCenter
-            .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
-                debouncer.execute {
-                    initLogos()
-                }
-            }
-    }
-
-    private fun initLogos() {
-        logos.forEach(BouncingLogo::dispose)
-        logos = List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle) }
-    }
-}
-
-val images = listOf(
-    "kotlin0_10x",
-    "kotlin1_10x",
-    "kotlin2_10x",
-    "kotlin3_10x",
-    "kotlin4_10x",
-)
-
-enum class Side {
-    Left,
-    Right,
-    Top,
-    Bottom,
-}
-
 class BouncingLogo(
     private val view: ScreenSaverView,
     private val bundle: NSBundle,
+    private val images: List<String>,
 ) {
+    private enum class Side {
+        Left,
+        Right,
+        Top,
+        Bottom,
+    }
+
     private var xDelta = if (Random.nextBoolean()) 1.0 else -1.0
     private var yDelta = if (Random.nextBoolean()) 1.0 else -1.0
 

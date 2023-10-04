@@ -19,9 +19,11 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     private lateinit var speedStepper: NSStepper
     private lateinit var countStepper: NSStepper
 
+    private lateinit var setComboBox: NSComboBox
+
     constructor() : super(
         NSWindow(
-            contentRect = NSMakeRect(x = 0.0, y = 0.0, w = 200.0, h = 160.0),
+            contentRect = NSMakeRect(x = 0.0, y = 0.0, w = 240.0, h = 200.0),
             styleMask = NSWindowStyleMaskClosable,
             backing = NSBackingStoreBuffered,
             defer = true
@@ -29,6 +31,13 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     ) {
         val mainStack = NSStackView()
         mainStack.orientation = NSUserInterfaceLayoutOrientationVertical
+
+        mainStack.addView(
+            createComboBox(
+                title = "Logo set",
+                ::setComboBox,
+            ), NSStackViewGravityTop
+        )
 
         mainStack.addView(
             createStepper(
@@ -56,13 +65,14 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
             createStepper(
                 title = "Speed",
                 listener = ::updateDisplayedValues,
-                min = 5,
+                min = 1,
                 max = 50,
                 step = 1,
                 ::speedTextField,
                 ::speedStepper
             ), NSStackViewGravityTop
         )
+
         mainStack.addView(createButtonStack(), NSStackViewGravityTrailing)
         mainStack.setEdgeInsets(
             mainStack.edgeInsets.copy {
@@ -75,6 +85,37 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
 
         loadValuesFromPrefs()
         updateDisplayedValues()
+    }
+
+    private fun createComboBox(
+        title: String,
+        comboBoxProp: KMutableProperty0<NSComboBox>,
+        ): NSStackView {
+        val stack = NSStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+
+        val label = NSTextField().apply {
+            stringValue = title
+            editable = false
+            selectable = false
+            drawsBackground = false
+            bezeled = false
+        }
+
+        val comboBox = NSComboBox().apply {
+            addItemsWithObjectValues(imageSets.map(ImageSet::name))
+            editable = false
+        }
+        comboBoxProp.set(comboBox)
+
+        stack.addView(label, NSStackViewGravityCenter)
+        stack.addView(comboBox, NSStackViewGravityCenter)
+
+        NSLayoutConstraint.activateConstraints(
+            listOf(comboBox.widthAnchor.constraintEqualToConstant(120.0))
+        )
+
+        return stack
     }
 
     private fun createStepper(
@@ -160,12 +201,14 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     }
 
     private fun loadValuesFromPrefs() {
+        setComboBox.selectItemAtIndex(Preferences.LOGO_SET.toLong())
         sizeStepper.setIntValue(Preferences.LOGO_SIZE)
         countStepper.setIntValue(Preferences.LOGO_COUNT)
         speedStepper.setIntValue(Preferences.SPEED)
     }
 
     private fun saveValuesToPrefs() {
+        Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
         Preferences.LOGO_SIZE = sizeStepper.intValue
         Preferences.LOGO_COUNT = countStepper.intValue
         Preferences.SPEED = speedStepper.intValue

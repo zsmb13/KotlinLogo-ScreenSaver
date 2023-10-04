@@ -4,7 +4,7 @@ import KotlinLogo
 
 class KotlinLogosView : ScreenSaverView {
 
-    let kotlinScreenSaverView = MainKt.create()
+    let kotlinScreenSaverView = KotlinScreenSaverViewKt.create()
 
     override init?(frame: NSRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)

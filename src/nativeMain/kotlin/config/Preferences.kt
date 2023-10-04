@@ -3,6 +3,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 object Preferences {
+    var LOGO_SET by UserDefaultDelegate(0)
     var LOGO_SIZE by UserDefaultDelegate(200)
     var LOGO_COUNT by UserDefaultDelegate(1)
     var SPEED by UserDefaultDelegate(10)
