@@ -1,9 +1,10 @@
 @file:OptIn(ExperimentalForeignApi::class)
 
+import config.KotlinLogosPrefController
 import config.Preferences
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.Foundation.NSBundle
+import platform.AppKit.NSWindow
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSRect
 import platform.Foundation.NSUserDefaultsDidChangeNotification
@@ -11,14 +12,18 @@ import platform.ScreenSaver.ScreenSaverView
 import util.Debouncer
 
 class LogoScreenSaverView : KotlinScreenSaverView() {
-    private var logos: List<BouncingLogo> = emptyList()
+    private val preferencesController by lazy { KotlinLogosPrefController() }
+    override val configureSheet: NSWindow?
+        get() = preferencesController.window
 
-    override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean, bundle: NSBundle) {
-        super.init(screenSaverView, isPreview, bundle)
+    override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
+        super.init(screenSaverView, isPreview)
         screenSaverView.animationTimeInterval = 1 / 60.0
         setupUserDefaultsObserver()
         initLogos()
     }
+
+    private var logos: List<BouncingLogo> = emptyList()
 
     override fun draw(rect: CPointer<NSRect>) {
         logos.forEach(BouncingLogo::draw)
@@ -29,6 +34,11 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
         view.setNeedsDisplayInRect(view.frame)
     }
 
+    private fun initLogos() {
+        logos.forEach(BouncingLogo::dispose)
+        logos = List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle, imageSets[Preferences.LOGO_SET].images()) }
+    }
+
     private val debouncer = Debouncer(delayMs = 500)
 
     private fun setupUserDefaultsObserver() {
@@ -37,10 +47,4 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
                 debouncer.execute { initLogos() }
             }
     }
-
-    private fun initLogos() {
-        logos.forEach(BouncingLogo::dispose)
-        logos = List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle, imageSets[Preferences.LOGO_SET].images()) }
-    }
 }
-

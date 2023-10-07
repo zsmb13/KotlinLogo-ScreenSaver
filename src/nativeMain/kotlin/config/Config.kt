@@ -234,7 +234,3 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         window?.sheetParent?.endSheet(window!!)
     }
 }
-
-fun prefController(): NSWindowController {
-    return KotlinLogosPrefController()
-}
