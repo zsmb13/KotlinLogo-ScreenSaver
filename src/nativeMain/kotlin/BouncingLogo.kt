@@ -1,10 +1,8 @@
 import config.Preferences
+import config.Preferences.IS_DEBUG
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
-import platform.AppKit.NSImage
-import platform.AppKit.NSImageScaleProportionallyUpOrDown
-import platform.AppKit.NSImageView
-import platform.AppKit.imageForResource
+import platform.AppKit.*
 import platform.CoreGraphics.CGColorCreateSRGB
 import platform.Foundation.NSBundle
 import platform.Foundation.NSMakeRect
@@ -70,8 +68,25 @@ class BouncingLogo(
         view.addSubview(this)
     }
 
+    private val debugTextView by lazy {
+        NSTextView().apply {
+            textColor = NSColor.redColor
+            drawsBackground = false
+            view.addSubview(this)
+        }
+    }
+
     fun draw() {
         imageView.frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2, w = logoWidth, h = logoHeight)
+
+        if (IS_DEBUG) {
+            debugTextView.frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2 - 40.0, w = 200.0, h = 40.0)
+            debugTextView.string = """
+                ${images[index]} (${logoWidth.toInt()}x${logoHeight.toInt()})
+                x: ${xPos.toInt()} y: ${yPos.toInt()}
+                speed $speed
+            """.trimIndent()
+        }
     }
 
     fun animateOneFrame() {
@@ -133,5 +148,8 @@ class BouncingLogo(
 
     fun dispose() {
         imageView.removeFromSuperview()
+        if (IS_DEBUG) {
+            debugTextView.removeFromSuperview()
+        }
     }
 }

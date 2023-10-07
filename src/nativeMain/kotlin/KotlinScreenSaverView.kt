@@ -6,8 +6,11 @@ import platform.AppKit.NSWindow
 import platform.Foundation.NSBundle
 import platform.Foundation.NSRect
 import platform.ScreenSaver.ScreenSaverView
+import util.debugLog
 
-fun create(): KotlinScreenSaverView = LogoScreenSaverView()
+fun create(): KotlinScreenSaverView = LogoScreenSaverView().also {
+    debugLog { "Created KotlinScreenSaverView" }
+}
 
 abstract class KotlinScreenSaverView {
     protected lateinit var view: ScreenSaverView

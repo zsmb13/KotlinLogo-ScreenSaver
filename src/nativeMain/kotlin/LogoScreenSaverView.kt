@@ -10,6 +10,7 @@ import platform.Foundation.NSRect
 import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.ScreenSaver.ScreenSaverView
 import util.Debouncer
+import util.debugLog
 
 class LogoScreenSaverView : KotlinScreenSaverView() {
     private val preferencesController by lazy { KotlinLogosPrefController() }
@@ -17,6 +18,7 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
         get() = preferencesController.window
 
     override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
+        debugLog { "LogoScreenSaverView inited" }
         super.init(screenSaverView, isPreview)
         screenSaverView.animationTimeInterval = 1 / 60.0
         setupUserDefaultsObserver()

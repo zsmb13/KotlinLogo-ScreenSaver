@@ -2,14 +2,17 @@ package config
 
 import ImageSet
 import imageSets
-import kotlinx.cinterop.*
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCAction
+import kotlinx.cinterop.copy
 import platform.AppKit.*
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSSelectorFromString
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty0
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     public constructor(coder: platform.Foundation.NSCoder) : super(coder)
 
@@ -92,7 +95,7 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     private fun createComboBox(
         title: String,
         comboBoxProp: KMutableProperty0<NSComboBox>,
-        ): NSStackView {
+    ): NSStackView {
         val stack = NSStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
 
