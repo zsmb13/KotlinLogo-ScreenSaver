@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "command",
+            "name": "xcodebuild debug",
+            "program": "xcodebuild",
+            "args": ["-scheme",  "KotlinLogos", "build"],
+            "workingDir": "KotlinLogos",
+        },
+        {
+            "type": "command",
+            "name": "xcodebuild release",
+            "program": "xcodebuild",
+            "args": ["-scheme",  "KotlinLogosRelease", "build"],
+            "workingDir": "KotlinLogos",
+        },
+    ]
+}
