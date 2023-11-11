@@ -18,8 +18,8 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
         get() = preferencesController.window
 
     override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
-        debugLog { "LogoScreenSaverView inited" }
         super.init(screenSaverView, isPreview)
+        debugLog { "LogoScreenSaverView inited" }
         screenSaverView.animationTimeInterval = 1 / 60.0
         setupUserDefaultsObserver()
         initLogos()
