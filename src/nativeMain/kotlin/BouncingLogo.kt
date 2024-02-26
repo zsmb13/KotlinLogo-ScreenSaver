@@ -1,52 +1,37 @@
 import config.Preferences
-import config.Preferences.IS_DEBUG
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.useContents
-import platform.AppKit.*
-import platform.CoreGraphics.CGColorCreateSRGB
-import platform.Foundation.NSBundle
+import platform.AppKit.NSImage
+import platform.AppKit.NSImageScaleProportionallyUpOrDown
+import platform.AppKit.NSImageView
 import platform.Foundation.NSMakeRect
 import platform.ScreenSaver.ScreenSaverView
-import util.debugLog
-import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlin.random.Random
 
 @OptIn(ExperimentalForeignApi::class)
 class BouncingLogo(
     private val view: ScreenSaverView,
-    private val bundle: NSBundle,
     private val images: List<String>,
+    private val specs: ScreenSpecs,
+    private val imageLoader: ImageLoader,
 ) {
-    private enum class Side {
-        Left,
-        Right,
-        Top,
-        Bottom,
-    }
-
-    private var xDelta = if (Random.nextBoolean()) 1.0 else -1.0
-    private var yDelta = if (Random.nextBoolean()) 1.0 else -1.0
+    private enum class Side { Left, Right, Top, Bottom, }
 
     // Initialized later based on image size
     private var logoWidth = 0.0
     private var logoHeight = 0.0
 
-    private val screenWidth = view.frame.useContents { this.size.width }
-    private val screenHeight = view.frame.useContents { this.size.height }
-
     private var xPos: Double
     private var yPos: Double
 
-    // Magic numbers 🪄✨
-    private var pxScale = ((screenWidth / 1728) + (screenHeight / 1117)) / 2
+    private val speed = specs.pxScale * Preferences.SPEED / 10.0 * Random.nextDouble(0.9, 1.1)
 
-    private val speed = pxScale * Preferences.SPEED / 10.0 * Random.nextDouble(0.9, 1.1)
+    private var xDelta = speed * if (Random.nextBoolean()) 1.0 else -1.0
+    private var yDelta = speed * if (Random.nextBoolean()) 1.0 else -1.0
 
     init {
-        val margin = Preferences.LOGO_SIZE * pxScale
-        xPos = Random.nextDouble(margin, screenWidth - margin)
-        yPos = Random.nextDouble(margin, screenHeight - margin)
+        val margin = Preferences.LOGO_SIZE * specs.pxScale
+        xPos = Random.nextDouble(margin, specs.screenWidth - margin)
+        yPos = Random.nextDouble(margin, specs.screenHeight - margin)
     }
 
     private val right: Double get() = xPos + logoWidth / 2
@@ -57,99 +42,63 @@ class BouncingLogo(
     private var index = Random.nextInt(images.size)
 
     private val imageView = NSImageView().apply {
-        if (Preferences.IS_DEBUG) {
-            wantsLayer = true
-            layer?.setBackgroundColor(CGColorCreateSRGB(1.0, 1.0, 1.0, 1.0))
-        }
-
         imageScaling = NSImageScaleProportionallyUpOrDown
-        image = loadImage(index)
+        image = updateImage()
         frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2, w = logoWidth, h = logoHeight)
         view.addSubview(this)
     }
 
-    private val debugTextView by lazy {
-        NSTextView().apply {
-            textColor = NSColor.redColor
-            drawsBackground = false
-            view.addSubview(this)
-        }
-    }
-
     fun draw() {
         imageView.frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2, w = logoWidth, h = logoHeight)
-
-        if (IS_DEBUG) {
-            debugTextView.frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2 - 40.0, w = 200.0, h = 40.0)
-            debugTextView.string = """
-                ${images[index]} (${logoWidth.toInt()}x${logoHeight.toInt()})
-                x: ${xPos.toInt()} y: ${yPos.toInt()}
-                speed $speed
-            """.trimIndent()
-        }
     }
 
-    fun animateOneFrame() {
-        xPos += xDelta * speed
-        yPos += yDelta * speed
+    fun animateFrame() {
+        xPos += xDelta
+        yPos += yDelta
 
         when {
-            xDelta > 0 && right >= screenWidth -> {
-                debugLog { "bounce(Right), $right (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
-                xDelta = -1.0
-                bounce(Side.Right)
-            }
-
-            yDelta > 0 && top >= screenHeight -> {
-                debugLog { "bounce(Top), $top (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
-                yDelta = -1.0
-                bounce(Side.Top)
-            }
-
-            xDelta < 0 && left <= 0 -> {
-                debugLog { "bounce(Left), $left (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
-                xDelta = 1.0
-                bounce(Side.Left)
-            }
-
-            yDelta < 0 && bottom <= 0 -> {
-                debugLog { "bounce(Bottom), $bottom (lw $logoWidth, lh $logoHeight) (x $xPos y $yPos)" }
-                yDelta = 1.0
-                bounce(Side.Bottom)
-            }
+            xDelta > 0 && right >= specs.screenWidth -> bounce(Side.Right)
+            yDelta > 0 && top >= specs.screenHeight -> bounce(Side.Top)
+            xDelta < 0 && left <= 0 -> bounce(Side.Left)
+            yDelta < 0 && bottom <= 0 -> bounce(Side.Bottom)
         }
     }
 
     private fun bounce(side: Side) {
         index = (index + 1) % images.size
-        imageView.image = loadImage(index)
+        imageView.image = updateImage()
 
         when (side) {
-            Side.Left -> xPos = logoWidth / 2
-            Side.Right -> xPos = screenWidth - logoWidth / 2
-            Side.Top -> yPos = screenHeight - logoHeight / 2
-            Side.Bottom -> yPos = logoHeight / 2
+            Side.Left -> {
+                xPos = logoWidth / 2
+                xDelta *= -1
+            }
+
+            Side.Right -> {
+                xPos = specs.screenWidth - logoWidth / 2
+                xDelta *= -1
+            }
+
+            Side.Top -> {
+                yPos = specs.screenHeight - logoHeight / 2
+                yDelta *= -1
+            }
+
+            Side.Bottom -> {
+                yPos = logoHeight / 2
+                yDelta *= -1
+            }
         }
     }
 
-    /**
-     * Sets logo width and heigh amounts so that their ratio matches
-     * the image ratio and their total area is LOGO_AREA.
-     */
-    private fun loadImage(index: Int): NSImage {
-        return bundle.imageForResource(images[index])!!.also { img ->
-            val (w, h) = img.size.useContents { width to height }
-            debugLog { "Loaded image ${images[index]}, w $w h $h" }
-            val area = (Preferences.LOGO_SIZE.toDouble() * pxScale).pow(2)
-            logoHeight = sqrt(area / (w / h))
-            logoWidth = area / logoHeight
-        }
+    private fun updateImage(): NSImage {
+        val (image, w, h) = imageLoader.loadImage(images[index])
+        logoWidth = w
+        logoHeight = h
+        return image
     }
 
     fun dispose() {
         imageView.removeFromSuperview()
-        if (IS_DEBUG) {
-            debugTextView.removeFromSuperview()
-        }
     }
 }

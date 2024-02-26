@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EBBEE0C62ABDCA660008AEF8 /* KotlinLogos.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBEE0C52ABDCA660008AEF8 /* KotlinLogos.swift */; };
+		3932816F45571DCA8D2756C4 /* KotlinLogos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39328626072C8A4F6BD97121 /* KotlinLogos.swift */; };
 		EBBEE0C82ABDF0580008AEF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBBEE0C72ABDF0580008AEF8 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		39328626072C8A4F6BD97121 /* KotlinLogos.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KotlinLogos.swift; sourceTree = "<group>"; };
 		EBBEE0B92ABDC9B80008AEF8 /* KotlinLogos.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KotlinLogos.saver; sourceTree = BUILT_PRODUCTS_DIR; };
-		EBBEE0C52ABDCA660008AEF8 /* KotlinLogos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotlinLogos.swift; sourceTree = "<group>"; };
 		EBBEE0C72ABDF0580008AEF8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,7 +48,7 @@
 			isa = PBXGroup;
 			children = (
 				EBBEE0C72ABDF0580008AEF8 /* Assets.xcassets */,
-				EBBEE0C52ABDCA660008AEF8 /* KotlinLogos.swift */,
+				39328626072C8A4F6BD97121 /* KotlinLogos.swift */,
 			);
 			path = KotlinLogos;
 			sourceTree = "<group>";
@@ -156,7 +156,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBBEE0C62ABDCA660008AEF8 /* KotlinLogos.swift in Sources */,
+				3932816F45571DCA8D2756C4 /* KotlinLogos.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

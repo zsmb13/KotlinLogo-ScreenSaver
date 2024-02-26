@@ -1,12 +1,7 @@
-@file:OptIn(ExperimentalForeignApi::class)
-
 import config.KotlinLogosPrefController
 import config.Preferences
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSWindow
 import platform.Foundation.NSNotificationCenter
-import platform.Foundation.NSRect
 import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.ScreenSaver.ScreenSaverView
 import util.Debouncer
@@ -19,7 +14,7 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
 
     override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
         super.init(screenSaverView, isPreview)
-        debugLog { "LogoScreenSaverView inited" }
+        debugLog { "LogoScreenSaverView inited, isPreview: $isPreview" }
         screenSaverView.animationTimeInterval = 1 / 60.0
         setupUserDefaultsObserver()
         initLogos()
@@ -27,18 +22,24 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
 
     private var logos: List<BouncingLogo> = emptyList()
 
-    override fun draw(rect: CPointer<NSRect>) {
-        logos.forEach(BouncingLogo::draw)
-    }
-
     override fun animateOneFrame() {
-        logos.forEach(BouncingLogo::animateOneFrame)
-        view.setNeedsDisplayInRect(view.frame)
+        logos.forEach(BouncingLogo::animateFrame)
+        logos.forEach(BouncingLogo::draw)
     }
 
     private fun initLogos() {
         logos.forEach(BouncingLogo::dispose)
-        logos = List(Preferences.LOGO_COUNT) { BouncingLogo(view, bundle, imageSets[Preferences.LOGO_SET].images()) }
+
+        val specs = ScreenSpecs(view)
+        val imageLoader = ImageLoader(specs, bundle)
+        logos = List(Preferences.LOGO_COUNT) {
+            BouncingLogo(
+                view = view,
+                images = imageSets[Preferences.LOGO_SET].images(),
+                specs = specs,
+                imageLoader = imageLoader,
+            )
+        }
     }
 
     private val debouncer = Debouncer(delayMs = 500)
