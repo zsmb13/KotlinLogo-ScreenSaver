@@ -11,6 +11,10 @@ Available image sets:
 * Kotlin logos
 * Kodee
 
+## Read the blog post
+
+The journey and technical details of creating this screen saver is documented in [Building a macOS screen saver in Kotlin on zsmb.co](https://zsmb.co/building-a-macos-screen-saver-in-kotlin/).
+
 ## Installation
 
 Release builds are currently not signed and notarized, however you can still [install these builds](#use-an-unsigned-release-build) by following the steps below. Alternatively, you can [build the screensaver](#build-it-yourself) from source.
