@@ -1,7 +1,9 @@
 package config
 
-import ImageSet
-import imageSets
+import imagesets.AssetImageSet
+import imagesets.CustomFolderImageSet
+import imagesets.ImageSet
+import imagesets.imageSets
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -9,6 +11,8 @@ import kotlinx.cinterop.copy
 import platform.AppKit.*
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSSelectorFromString
+import platform.Foundation.NSURL
+import util.debugLog
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty0
 
@@ -25,10 +29,11 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     private lateinit var countStepper: NSStepper
 
     private lateinit var setComboBox: NSComboBox
+    private var customFolder: String = ""
 
     constructor() : super(
         NSWindow(
-            contentRect = NSMakeRect(x = 0.0, y = 0.0, w = 240.0, h = 200.0),
+            contentRect = NSMakeRect(x = 0.0, y = 0.0, w = 320.0, h = 200.0),
             styleMask = NSWindowStyleMaskClosable,
             backing = NSBackingStoreBuffered,
             defer = true
@@ -37,12 +42,16 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         val mainStack = NSStackView()
         mainStack.orientation = NSUserInterfaceLayoutOrientationVertical
 
-        mainStack.addView(
+        val stack = NSStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.addView(
             createComboBox(
                 title = "Logo set",
                 ::setComboBox,
-            ), NSStackViewGravityTop
+            ), NSStackViewGravityCenter
         )
+        stack.addView(createButton("Browse", "x", ::openPicker), NSStackViewGravityCenter)
+        mainStack.addView(stack, NSStackViewGravityTop)
 
         mainStack.addView(
             createStepper(
@@ -90,6 +99,31 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
 
         loadValuesFromPrefs()
         updateDisplayedValues()
+    }
+
+    val openPanel by lazy {
+        NSOpenPanel().apply {
+            allowsMultipleSelection = false
+            canChooseDirectories = true
+            canCreateDirectories = false
+            canChooseFiles = false
+        }
+    }
+
+    @ObjCAction
+    private fun openPicker() {
+        debugLog { "Open picker called" }
+        debugLog { "Will open picker $openPanel" }
+        openPanel.beginWithCompletionHandler { response ->
+            debugLog { "Picker result was $response, ${openPanel.URLs}" }
+
+            if (response == NSModalResponseOK && openPanel.URLs.isNotEmpty()) {
+                debugLog { "Picker result! ${openPanel.URLs}" }
+                val url = openPanel.URLs.first() as NSURL
+                customFolder = url.toString()
+                updateDisplayedValues()
+            }
+        }
     }
 
     private fun createComboBox(
@@ -172,20 +206,10 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     private fun createButtonStack(): NSStackView {
         val buttonsStack = NSStackView()
 
-        val cancelButton = NSButton().apply {
-            setListener(::performCancel)
-            title = "Cancel"
-            keyEquivalent = "\u001B"
-            bezelStyle = NSBezelStyleRounded
-        }
+        val cancelButton = createButton("Cancel", "\u001B", ::performCancel)
         buttonsStack.addView(cancelButton, NSStackViewGravityTrailing)
 
-        val okButton = NSButton().apply {
-            setListener(::performOk)
-            title = "OK"
-            keyEquivalent = "\r"
-            bezelStyle = NSBezelStyleRounded
-        }
+        val okButton = createButton(title = "OK", keyEquivalent = "\r", action = ::performOk)
         buttonsStack.addView(okButton, NSStackViewGravityTrailing)
 
         NSLayoutConstraint.activateConstraints(
@@ -200,20 +224,48 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         return buttonsStack
     }
 
+    private fun createButton(title: String, keyEquivalent: String, action: KFunction<Unit>): NSButton {
+        return NSButton().apply {
+            setListener(action)
+            this.title = title
+            this.keyEquivalent = keyEquivalent
+            this.bezelStyle = NSBezelStyleRounded
+        }
+    }
+
     private fun NSControl.setListener(selfFunc: KFunction<Unit>) {
         target = this@KotlinLogosPrefController
         action = NSSelectorFromString(selfFunc.name)
     }
 
     private fun loadValuesFromPrefs() {
-        setComboBox.selectItemAtIndex(Preferences.LOGO_SET.toLong())
+        setComboBox.apply {
+            removeAllItems()
+            addItemsWithObjectValues(imageSets.map(ImageSet::name))
+            selectItemAtIndex(Preferences.LOGO_SET.toLong())
+        }
+        customFolder = Preferences.CUSTOM_FOLDER
+
         sizeStepper.setIntValue(Preferences.LOGO_SIZE)
         countStepper.setIntValue(Preferences.LOGO_COUNT)
         speedStepper.setIntValue(Preferences.SPEED)
     }
 
     private fun saveValuesToPrefs() {
-        Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
+        imageSets.retainAll { it is AssetImageSet }
+        val custom = CustomFolderImageSet.load(customFolder)
+
+        if (custom != null) {
+            debugLog { "Saving prefs, customFolder '$customFolder'" }
+            imageSets.add(custom)
+            Preferences.CUSTOM_FOLDER = customFolder
+            Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
+        } else {
+            debugLog { "Saving prefs, ignoring customFolder '$customFolder'" }
+            Preferences.CUSTOM_FOLDER = ""
+            Preferences.LOGO_SET = 0
+        }
+
         Preferences.LOGO_SIZE = sizeStepper.intValue
         Preferences.LOGO_COUNT = countStepper.intValue
         Preferences.SPEED = speedStepper.intValue
@@ -221,6 +273,16 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
 
     @ObjCAction
     fun updateDisplayedValues() {
+        setComboBox.apply {
+            val tempIndex = indexOfSelectedItem
+
+            val customOption = customFolder.trimEnd('/').substringAfterLast("/")
+
+            removeAllItems()
+            val updatedItems = imageSets.filter { it is AssetImageSet }.map(ImageSet::name) + customOption
+            addItemsWithObjectValues(updatedItems)
+            selectItemAtIndex(if (tempIndex in updatedItems.indices) tempIndex else 0)
+        }
         sizeTextField.stringValue = sizeStepper.intValue.toString()
         countTextField.stringValue = countStepper.intValue.toString()
         speedTextField.stringValue = speedStepper.intValue.toString()

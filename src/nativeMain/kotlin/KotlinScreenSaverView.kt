@@ -1,3 +1,4 @@
+import config.Preferences.APP_ID
 import platform.AppKit.NSWindow
 import platform.Foundation.NSBundle
 import platform.ScreenSaver.ScreenSaverView
@@ -19,7 +20,7 @@ abstract class KotlinScreenSaverView {
 
     open fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
         this.view = screenSaverView
-        this.bundle = NSBundle.bundleWithIdentifier("co.zsmb.KotlinLogos")!!
+        this.bundle = NSBundle.bundleWithIdentifier(APP_ID)!!
         this.isPreview = isPreview
     }
 
