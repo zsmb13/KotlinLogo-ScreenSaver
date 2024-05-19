@@ -13,7 +13,7 @@ object Preferences {
 
     var CUSTOM_FOLDER by StringUserDefaultDelegate()
 
-    const val IS_DEBUG = true
+    const val IS_DEBUG = false
     const val APP_ID = "co.zsmb.KotlinLogos"
 
     internal fun reset() {
