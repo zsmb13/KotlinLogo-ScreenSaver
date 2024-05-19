@@ -15,6 +15,14 @@ object Preferences {
 
     const val IS_DEBUG = true
     const val APP_ID = "co.zsmb.KotlinLogos"
+
+    internal fun reset() {
+        LOGO_SET = 0
+        LOGO_SIZE = 200
+        LOGO_COUNT = 1
+        SPEED = 10
+        CUSTOM_FOLDER = ""
+    }
 }
 
 class LongUserDefaultDelegate(private val default: Long) : ReadWriteProperty<Any?, Int> {

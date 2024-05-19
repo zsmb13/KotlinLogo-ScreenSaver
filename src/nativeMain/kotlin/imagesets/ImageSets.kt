@@ -35,11 +35,17 @@ val imageSets: MutableList<ImageSet> = mutableListOf<ImageSet>(
         )
     ),
 ).apply {
-    val custom = CustomFolderImageSet.load(Preferences.CUSTOM_FOLDER)
+    val customFolder = Preferences.CUSTOM_FOLDER
+    if (customFolder.isEmpty()) {
+        // No custom folder set
+        return@apply
+    }
+
+    val custom = CustomFolderImageSet.load(customFolder)
     if (custom != null) {
         add(custom)
     } else {
-        debugLog { "Failed to load custom folder, resetting" }
+        debugLog { "Failed to load custom folder '$custom', resetting to default image set" }
         Preferences.CUSTOM_FOLDER = ""
         Preferences.LOGO_SET = 0
     }

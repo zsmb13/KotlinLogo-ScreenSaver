@@ -2,6 +2,7 @@ package imagesets
 
 import platform.AppKit.NSImage
 import platform.Foundation.NSDirectoryEnumerationSkipsHiddenFiles
+import platform.Foundation.NSDirectoryEnumerationSkipsSubdirectoryDescendants
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import util.debugLog
@@ -30,14 +31,17 @@ class CustomFolderImageSet private constructor(
             val enum = NSFileManager.defaultManager.enumeratorAtURL(
                 NSURL(string = folderUrl),
                 null,
-                NSDirectoryEnumerationSkipsHiddenFiles,
+                NSDirectoryEnumerationSkipsHiddenFiles or NSDirectoryEnumerationSkipsSubdirectoryDescendants,
                 null
             )
-            val images = buildList {
+
+            var fileCount = 0
+            val images: List<String> = buildList {
                 if (enum != null) {
                     var next = enum.nextObject()
                     while (next != null) {
-                        if (next is NSURL && next.toString().substringAfterLast('.') in setOf("png", "svg")) {
+                        fileCount++
+                        if (next is NSURL && next.isSupportedImage()) {
                             add(next.toString())
                         }
                         next = enum.nextObject()
@@ -45,7 +49,8 @@ class CustomFolderImageSet private constructor(
                 }
             }
 
-            debugLog { "Found ${images.size} images: $images" }
+            debugLog { "Inspected $fileCount files, found ${images.size} images" }
+            debugLog { images.joinToString() }
 
             if (images.isEmpty()) {
                 debugLog { "Failed to create custom image set" }
@@ -57,5 +62,8 @@ class CustomFolderImageSet private constructor(
                 images = images.sorted(),
             )
         }
+
+        private fun NSURL.isSupportedImage(): Boolean =
+            toString().substringAfterLast('.').lowercase() in setOf("png", "svg")
     }
 }

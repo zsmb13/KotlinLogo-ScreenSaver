@@ -42,16 +42,12 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         val mainStack = NSStackView()
         mainStack.orientation = NSUserInterfaceLayoutOrientationVertical
 
-        val stack = NSStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.addView(
-            createComboBox(
-                title = "Logo set",
-                ::setComboBox,
-            ), NSStackViewGravityCenter
+        val comboStack = createComboBox(
+            title = "Logo set",
+            ::setComboBox,
         )
-        stack.addView(createButton("Browse", "x", ::openPicker), NSStackViewGravityCenter)
-        mainStack.addView(stack, NSStackViewGravityTop)
+        comboStack.addView(createButton("Browse", "x", ::openPicker), NSStackViewGravityCenter)
+        mainStack.addView(comboStack, NSStackViewGravityTop)
 
         mainStack.addView(
             createStepper(
@@ -101,7 +97,7 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         updateDisplayedValues()
     }
 
-    val openPanel by lazy {
+    private val openPanel by lazy {
         NSOpenPanel().apply {
             allowsMultipleSelection = false
             canChooseDirectories = true
@@ -112,16 +108,17 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
 
     @ObjCAction
     private fun openPicker() {
-        debugLog { "Open picker called" }
-        debugLog { "Will open picker $openPanel" }
         openPanel.beginWithCompletionHandler { response ->
             debugLog { "Picker result was $response, ${openPanel.URLs}" }
-
             if (response == NSModalResponseOK && openPanel.URLs.isNotEmpty()) {
-                debugLog { "Picker result! ${openPanel.URLs}" }
                 val url = openPanel.URLs.first() as NSURL
                 customFolder = url.toString()
                 updateDisplayedValues()
+                if (customFolder.isNotEmpty()) {
+                    setComboBox.selectItemAtIndex(setComboBox.numberOfItems - 1)
+                } else {
+                    setComboBox.selectItemAtIndex(0)
+                }
             }
         }
     }
@@ -209,6 +206,9 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         val cancelButton = createButton("Cancel", "\u001B", ::performCancel)
         buttonsStack.addView(cancelButton, NSStackViewGravityTrailing)
 
+        val resetButton = createButton("Reset", "R", ::performReset)
+        buttonsStack.addView(resetButton, NSStackViewGravityTrailing)
+
         val okButton = createButton(title = "OK", keyEquivalent = "\r", action = ::performOk)
         buttonsStack.addView(okButton, NSStackViewGravityTrailing)
 
@@ -253,17 +253,21 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
 
     private fun saveValuesToPrefs() {
         imageSets.retainAll { it is AssetImageSet }
-        val custom = CustomFolderImageSet.load(customFolder)
 
-        if (custom != null) {
-            debugLog { "Saving prefs, customFolder '$customFolder'" }
-            imageSets.add(custom)
-            Preferences.CUSTOM_FOLDER = customFolder
-            Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
+        if (customFolder.isNotEmpty()) {
+            val custom = CustomFolderImageSet.load(customFolder)
+            if (custom == null) {
+                // We had a custom folder set, but it fails to load, drop it
+                Preferences.CUSTOM_FOLDER = ""
+                Preferences.LOGO_SET = 0
+            } else {
+                // Successfully loaded custom folder, remember it and proceed as normal
+                imageSets.add(custom)
+                Preferences.CUSTOM_FOLDER = customFolder
+                Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
+            }
         } else {
-            debugLog { "Saving prefs, ignoring customFolder '$customFolder'" }
-            Preferences.CUSTOM_FOLDER = ""
-            Preferences.LOGO_SET = 0
+            Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
         }
 
         Preferences.LOGO_SIZE = sizeStepper.intValue
@@ -275,17 +279,30 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     fun updateDisplayedValues() {
         setComboBox.apply {
             val tempIndex = indexOfSelectedItem
-
             val customOption = customFolder.trimEnd('/').substringAfterLast("/")
-
             removeAllItems()
-            val updatedItems = imageSets.filter { it is AssetImageSet }.map(ImageSet::name) + customOption
+
+            val updatedItems = buildList {
+                addAll(imageSets.filterIsInstance<AssetImageSet>().map(ImageSet::name))
+
+                if (customOption.isNotEmpty()) {
+                    add(customOption)
+                }
+            }
+
             addItemsWithObjectValues(updatedItems)
             selectItemAtIndex(if (tempIndex in updatedItems.indices) tempIndex else 0)
         }
         sizeTextField.stringValue = sizeStepper.intValue.toString()
         countTextField.stringValue = countStepper.intValue.toString()
         speedTextField.stringValue = speedStepper.intValue.toString()
+    }
+
+    @ObjCAction
+    fun performReset() {
+        Preferences.reset()
+        loadValuesFromPrefs()
+        window?.sheetParent?.endSheet(window!!)
     }
 
     @ObjCAction
