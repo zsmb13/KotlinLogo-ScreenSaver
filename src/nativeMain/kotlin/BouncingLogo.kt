@@ -1,4 +1,5 @@
 import config.Preferences
+import imagesets.ImageSet
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSImage
 import platform.AppKit.NSImageScaleProportionallyUpOrDown
@@ -10,7 +11,7 @@ import kotlin.random.Random
 @OptIn(ExperimentalForeignApi::class)
 class BouncingLogo(
     private val view: ScreenSaverView,
-    private val images: List<String>,
+    private val imageSet: ImageSet,
     private val specs: ScreenSpecs,
     private val imageLoader: ImageLoader,
 ) {
@@ -39,7 +40,7 @@ class BouncingLogo(
     private val top: Double get() = yPos + logoHeight / 2
     private val bottom: Double get() = yPos - logoHeight / 2
 
-    private var index = Random.nextInt(images.size)
+    private var index = Random.nextInt(imageSet.size)
 
     private val imageView = NSImageView().apply {
         imageScaling = NSImageScaleProportionallyUpOrDown
@@ -65,7 +66,7 @@ class BouncingLogo(
     }
 
     private fun bounce(side: Side) {
-        index = (index + 1) % images.size
+        index = (index + 1) % imageSet.size
         imageView.image = updateImage()
 
         when (side) {
@@ -92,7 +93,7 @@ class BouncingLogo(
     }
 
     private fun updateImage(): NSImage {
-        val (image, w, h) = imageLoader.loadImage(images[index])
+        val (image, w, h) = imageLoader.loadImage(imageSet, index)
         logoWidth = w
         logoHeight = h
         return image

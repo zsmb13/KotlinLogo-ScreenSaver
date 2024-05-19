@@ -1,5 +1,6 @@
 import config.KotlinLogosPrefController
 import config.Preferences
+import imagesets.imageSets
 import platform.AppKit.NSWindow
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
@@ -31,11 +32,11 @@ class LogoScreenSaverView : KotlinScreenSaverView() {
         logos.forEach(BouncingLogo::dispose)
 
         val specs = ScreenSpecs(view)
-        val imageLoader = ImageLoader(specs, bundle)
+        val imageLoader = ImageLoader(specs)
         logos = List(Preferences.LOGO_COUNT) {
             BouncingLogo(
                 view = view,
-                images = imageSets[Preferences.LOGO_SET].images(),
+                imageSet = imageSets[Preferences.LOGO_SET],
                 specs = specs,
                 imageLoader = imageLoader,
             )

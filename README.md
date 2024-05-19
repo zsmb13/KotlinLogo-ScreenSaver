@@ -11,6 +11,10 @@ Available image sets:
 * Kotlin logos
 * Kodee
 
+You can also browse for your own folder of images.
+
+> Note: Use a folder with accessible permissions, for example, create a `~/screensaver-images` folder, and place your images there. The screen saver looks for PNG and SVG images in the custom folder. Folders located in places like your Downloads folder will likely show their images in the preview, but not work with the actual screen saver. If this happens, try to place the folder in a different location.
+
 ## Read the blog post
 
 The journey and technical details of creating this screen saver is documented in [Building a macOS screen saver in Kotlin on zsmb.co](https://zsmb.co/building-a-macos-screen-saver-in-kotlin/).

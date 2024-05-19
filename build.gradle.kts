@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
-    kotlin("multiplatform") version "1.9.10"
+    kotlin("multiplatform") version "2.0.0-RC3"
 }
 
 repositories {
@@ -22,16 +22,8 @@ kotlin {
     }
 
     sourceSets {
-        val nativeMain by creating {
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-            }
-        }
-        val macosX64Main by getting {
-            dependsOn(nativeMain)
-        }
-        val macosArm64Main by getting {
-            dependsOn(nativeMain)
+        macosMain.dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
         }
     }
 }
