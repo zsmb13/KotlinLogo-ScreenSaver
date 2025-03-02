@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
-    kotlin("multiplatform") version "2.0.0-RC3"
+    kotlin("multiplatform") version "2.1.10"
 }
 
 repositories {
@@ -23,7 +23,7 @@ kotlin {
 
     sourceSets {
         macosMain.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
         }
     }
 }
