@@ -2,30 +2,44 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform") version "2.1.10"
-}
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
     val xcf = XCFramework("KotlinLogo")
 
-    val targets = listOf(macosX64(), macosArm64())
-    targets.forEach { target ->
+//    val targets = listOf(macosX64(), macosArm64())
+    val target = macosArm64()
+    target.let { target ->
         target.binaries.framework {
             binaryOption("bundleId", "co.zsmb.KotlinLogos")
             baseName = "KotlinLogo"
             isStatic = true
+//            transitiveExport = false
             xcf.add(this)
         }
     }
 
     sourceSets {
-        macosMain.dependencies {
+        nativeMain.dependencies {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+            implementation(compose.ui)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+//            implementation(compose.material3)
+//            implementation(compose.components.resources)
         }
     }
+
+    target.apply {
+        binaries {
+            executable {
+                entryPoint = "main"
+            }
+        }
+    }
+
 }
 
 tasks.wrapper {

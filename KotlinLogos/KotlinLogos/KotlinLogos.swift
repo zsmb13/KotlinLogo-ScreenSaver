@@ -19,7 +19,7 @@ class KotlinLogosView: ScreenSaverView {
         if (!isPreview) {
             // Alternative impl
             // self.removeFromSuperview()
-            NSApplication.shared.terminate(nil)
+            //NSApplication.shared.terminate(nil)
         }
     }
 
