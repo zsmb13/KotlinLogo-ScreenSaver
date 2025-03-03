@@ -4,7 +4,7 @@ import platform.Foundation.NSBundle
 import platform.ScreenSaver.ScreenSaverView
 import util.debugLog
 
-fun create(): KotlinScreenSaverView = LogoScreenSaverView().also {
+fun create(): KotlinScreenSaverView = ComposeScreenSaverView().also {
     debugLog { "Created KotlinScreenSaverView" }
 }
 
