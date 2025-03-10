@@ -2,10 +2,12 @@ import ScreenSaver
 import KotlinLogo
 
 class KotlinLogosView: ScreenSaverView {
+    let ignor = NSLog("KotlinLogosView ignor")
     let kotlinScreenSaverView = KotlinScreenSaverViewKt.create()
 
     override init?(frame: NSRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
+        NSLog("KotlinLogosView init2")
         kotlinScreenSaverView.doInit(screenSaverView: self, isPreview: isPreview)
         DistributedNotificationCenter.default.addObserver(
             self,

@@ -18,8 +18,10 @@ import util.debugLog
 
 class ComposeScreenSaverView : KotlinScreenSaverView() {
     override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
+        debugLog { "ComposeScreenSaverView initing, isPreview: $isPreview" }
         super.init(screenSaverView, isPreview)
         attach(screenSaverView)
+        debugLog { "ComposeScreenSaverView inited, isPreview: $isPreview" }
     }
 
     override fun animateOneFrame() {
@@ -32,7 +34,7 @@ fun attach(screenSaverView: ScreenSaverView) {
 
 //    NSApplication.sharedApplication()
     var view: NSView? = null
-    val w: Unit = Window("Graphics2D") {
+    Window("Graphics2D") {
 //        BasicText("Hello")
         view = this.window.contentView
 

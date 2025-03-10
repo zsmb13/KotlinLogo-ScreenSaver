@@ -15,7 +15,7 @@ kotlin {
         target.binaries.framework {
             binaryOption("bundleId", "co.zsmb.KotlinLogos")
             baseName = "KotlinLogo"
-            isStatic = true
+            isStatic = false
 //            transitiveExport = false
             xcf.add(this)
         }
