@@ -15,8 +15,7 @@ kotlin {
         target.binaries.framework {
             binaryOption("bundleId", "co.zsmb.KotlinLogos")
             baseName = "KotlinLogo"
-            isStatic = false
-//            transitiveExport = false
+            isStatic = true
             xcf.add(this)
         }
     }
@@ -27,8 +26,11 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.runtime)
             implementation(compose.foundation)
+
+            implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.7.0")
+
 //            implementation(compose.material3)
-//            implementation(compose.components.resources)
+            implementation(compose.components.resources)
         }
     }
 

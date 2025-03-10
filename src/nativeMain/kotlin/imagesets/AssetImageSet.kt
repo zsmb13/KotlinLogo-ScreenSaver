@@ -5,7 +5,7 @@ import platform.AppKit.NSImage
 import platform.AppKit.imageForResource
 import platform.Foundation.NSBundle
 
-private val bundle by lazy {
+val bundle by lazy {
     NSBundle.bundleWithIdentifier(APP_ID)!!
 }
 
