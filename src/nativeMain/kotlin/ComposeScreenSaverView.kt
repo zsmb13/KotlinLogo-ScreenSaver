@@ -39,7 +39,6 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.decodeToSvgPainter
-import platform.AppKit.NSImage
 import platform.AppKit.NSView
 import platform.AppKit.NSWindow
 import platform.Foundation.NSMakeRect
@@ -100,7 +99,6 @@ fun attach(screenSaverView: ScreenSaverView, logos: MutableList<BouncingLogo2>) 
         BouncingLogo2(
             imageSet = imageSet,
             specs = specs,
-            imageLoader = imageLoader,
         )
     }
 
@@ -159,7 +157,6 @@ fun attach(screenSaverView: ScreenSaverView, logos: MutableList<BouncingLogo2>) 
 class BouncingLogo2(
     private val imageSet: ImageSet,
     private val specs: ScreenSpecs,
-    private val imageLoader: ImageLoader,
 ) {
     private enum class Side { Left, Right, Bottom, Top, }
 
@@ -170,11 +167,10 @@ class BouncingLogo2(
     private var index = Random.nextInt(imageSet.size)
 
     val imageUrl = imageSet.images[index]
-    val path = Path(imageUrl.substringAfter("file://"))
-    val systemFileSystem = SystemFileSystem
-    val source = systemFileSystem.source(path)
-    val bufferedSource = source.buffered()
-    val bytes = bufferedSource.use { it.readByteArray() }
+    val bytes = SystemFileSystem.source(Path(imageUrl.substringAfter("file://")))
+        .buffered()
+        .use { it.readByteArray() }
+
     val area = (Preferences.LOGO_SIZE.toDouble() * specs.pxScale).pow(2)
 
     private var xPos by mutableStateOf<Double>(0.0)
@@ -238,7 +234,6 @@ class BouncingLogo2(
 
     private fun bounce(side: Side) {
         index = (index + 1) % imageSet.size
-//        imageView.image = updateImage()
 
         debugLog { "Bouncing on $side" }
         when (side) {
@@ -262,12 +257,5 @@ class BouncingLogo2(
                 yDelta *= -1
             }
         }
-    }
-
-    private fun updateImage(): NSImage {
-        val (image, w, h) = imageLoader.loadImage(imageSet, index)
-        logoWidth = w
-        logoHeight = h
-        return image
     }
 }
