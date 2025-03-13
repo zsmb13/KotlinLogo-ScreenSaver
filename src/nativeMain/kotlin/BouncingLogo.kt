@@ -26,13 +26,13 @@ class BouncingLogo(
 
     private val speed = specs.pxScale * Preferences.SPEED / 10.0 * Random.nextDouble(0.9, 1.1)
 
-    private var xDelta = speed * 1.0
-    private var yDelta = speed * 1.0
+    private var xDelta = speed * if (Random.nextBoolean()) 1.0 else -1.0
+    private var yDelta = speed * if (Random.nextBoolean()) 1.0 else -1.0
 
     init {
         val margin = Preferences.LOGO_SIZE * specs.pxScale
-        xPos = specs.screenWidth - margin * 5 - logoWidth
-        yPos = specs.screenHeight - margin * 5 - logoHeight
+        xPos = Random.nextDouble(margin, specs.screenWidth - margin)
+        yPos = Random.nextDouble(margin, specs.screenHeight - margin)
     }
 
     private val right: Double get() = xPos + logoWidth / 2
