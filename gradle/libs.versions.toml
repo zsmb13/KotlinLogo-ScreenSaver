@@ -1,8 +1,9 @@
 [versions]
 androidx-lifecycle = "2.8.4"
 compose-multiplatform = "1.8.0-alpha04"
-kotlin = "2.1.10"
+kotlin = "2.1.20-RC3"
 kotlinx-coroutines = "1.10.1"
+compose-hot-reload = "1.0.0-alpha01"
 
 [libraries]
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
@@ -12,3 +13,4 @@ androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hot-reload" }

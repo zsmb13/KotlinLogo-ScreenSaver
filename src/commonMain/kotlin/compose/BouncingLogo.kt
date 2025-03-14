@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import imagesets.ImageSet
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import util.debugLog
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -71,8 +72,23 @@ fun BouncingLogo(
         while (true) {
             val (currentX, currentY) = animXY.value
 
-            val remainingX = if (delta.x > 0) screenW - (currentX + logoWidth / 2) else (currentX - logoWidth / 2)
-            val remainingY = if (delta.y > 0) screenH - (currentY + logoHeight / 2) else (currentY - logoHeight / 2)
+            val right = currentX + logoWidth / 2
+            val left = currentX - logoWidth / 2
+
+            val bottom = currentY + logoHeight / 2
+            val top = currentY - logoHeight / 2
+
+            debugLog { "screenW = $screenW, screenH = $screenH" }
+            debugLog { "currentX = $currentX, currentY = $currentY" }
+            debugLog { "logoWidth = $logoWidth, logoHeight = $logoHeight" }
+            debugLog { "right = $right, left = $left, bottom = $bottom, top = $top" }
+
+            val remainingX = if (delta.x > 0) {
+                screenW - right
+            } else {
+                left
+            }
+            val remainingY = if (delta.y > 0) screenH - (bottom) else top
 
             val xSmaller = remainingX < remainingY
             val remaining = if (xSmaller) remainingX else remainingY
@@ -80,6 +96,8 @@ fun BouncingLogo(
 
             val xTarget = currentX + remaining * if (delta.x > 0) 1 else -1
             val yTarget = currentY + remaining * if (delta.y > 0) 1 else -1
+
+            debugLog { "animating to xTarget = $xTarget, yTarget = $yTarget, duration = $duration" }
 
             animXY.animateTo(
                 targetValue = Offset(xTarget, yTarget),

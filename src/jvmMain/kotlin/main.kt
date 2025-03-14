@@ -8,14 +8,15 @@ import compose.ImageLoader
 import compose.PrefValues
 import compose.ScreenSaverContent
 import imagesets.CustomFolderImageSet
+import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import kotlin.math.pow
 
 fun main() {
     val prefs = PrefValues(
         logoSize = 20,
         logoSet = 2,
-        logoCount = 10,
-        speed = 20,
+        logoCount = 1,
+        speed = 10,
     )
 
     val windowWidth = 800.0
@@ -27,27 +28,30 @@ fun main() {
             onCloseRequest = ::exitApplication,
             state = rememberWindowState(width = windowWidth.dp, height = windowHeight.dp),
             resizable = false,
+            alwaysOnTop = true,
         ) {
-            val specs = remember {
-                ScreenSpecs(
-                    screenWidth = windowWidth,
-                    screenHeight = windowHeight,
-                    pxScale = 1.0,
+            DevelopmentEntryPoint {
+                val specs = remember {
+                    ScreenSpecs(
+                        screenWidth = windowWidth,
+                        screenHeight = windowHeight,
+                        pxScale = 1.0,
+                    )
+                }
+                val density = LocalDensity.current
+                val imageLoader = remember {
+                    ImageLoader(
+                        density = density,
+                        targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat()
+                    )
+                }
+                ScreenSaverContent(
+                    prefs = prefs,
+                    imageSet = CustomFolderImageSet("/Users/zsmb/screensaver-images")!!,
+                    imgLoader = imageLoader,
+                    specs = specs,
                 )
             }
-            val density = LocalDensity.current
-            val imageLoader = remember {
-                ImageLoader(
-                    density = density,
-                    targetArea = (prefs.logoSize * 2.0).pow(2).toFloat()
-                )
-            }
-            ScreenSaverContent(
-                prefs = prefs,
-                imageSet = CustomFolderImageSet("/Users/zsmb/screensaver-images")!!,
-                imgLoader = imageLoader,
-                specs = specs,
-            )
         }
     }
 }
