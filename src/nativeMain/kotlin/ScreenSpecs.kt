@@ -7,9 +7,9 @@ fun ScreenSpecs(view: ScreenSaverView): ScreenSpecs {
     val screenWidth = view.frame.useContents { this.size.width }
     val screenHeight = view.frame.useContents { this.size.height }
     return ScreenSpecs(
-        screenWidth,
-        screenHeight,
+        screenWidth = screenWidth,
+        screenHeight = screenHeight,
         // Magic numbers 🪄✨
-        ((screenWidth / 1728) + (screenHeight / 1117)) / 2,
+        pxScale = ((screenWidth / 1728) + (screenHeight / 1117)) / 2,
     )
 }
