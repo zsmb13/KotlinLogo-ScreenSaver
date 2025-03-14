@@ -12,26 +12,31 @@ import kotlin.math.pow
 
 fun main() {
     val prefs = PrefValues(
-        logoSize = 100,
+        logoSize = 20,
         logoSet = 2,
         logoCount = 10,
         speed = 20,
     )
 
+    val windowWidth = 800.0
+    val windowHeight = 600.0
+
     application {
         Window(
+            title = "KotlinLogo JVM",
             onCloseRequest = ::exitApplication,
-            state = rememberWindowState(width = 600.dp, height = 800.dp),
+            state = rememberWindowState(width = windowWidth.dp, height = windowHeight.dp),
+            resizable = false,
         ) {
             val specs = remember {
                 ScreenSpecs(
-                    screenWidth = this.window.width.toDouble(),
-                    screenHeight = this.window.height.toDouble(),
-                    pxScale = 2.0,
+                    screenWidth = windowWidth,
+                    screenHeight = windowHeight,
+                    pxScale = 1.0,
                 )
             }
             val density = LocalDensity.current
-            val imageLoader =remember {
+            val imageLoader = remember {
                 ImageLoader(
                     density = density,
                     targetArea = (prefs.logoSize * 2.0).pow(2).toFloat()

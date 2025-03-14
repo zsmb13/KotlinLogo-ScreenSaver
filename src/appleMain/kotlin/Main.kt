@@ -18,7 +18,7 @@ fun main() {
 
     GlobalPreferences.CUSTOM_FOLDER = "/Users/zsmb/screensaver-images"
 
-    Window("KotlinLogos") {
+    Window("KotlinLogo macOS native") {
         val specs = remember {
             ScreenSpecs(
                 screenWidth = this.window.frame.useContents { this.size.width },
