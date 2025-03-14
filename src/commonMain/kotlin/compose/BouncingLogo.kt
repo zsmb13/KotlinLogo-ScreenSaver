@@ -68,10 +68,10 @@ fun BouncingLogo(
         )
     }
 
-    val logoWidthPx = with(LocalDensity.current){ logoWidth.dp.toPx()}
-    val logoHeightPx = with(LocalDensity.current){ logoHeight.dp.toPx()}
+    val logoWidthPx = with(LocalDensity.current) { logoWidth.dp.toPx() }
+    val logoHeightPx = with(LocalDensity.current) { logoHeight.dp.toPx() }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(imageSet, imgLoader, screenW, screenH, logoHeightPx) {
         while (true) {
             val (currentX, currentY) = animXY.value
 
@@ -124,7 +124,6 @@ fun BouncingLogo(
                 translationY = animXY.value.y - logoHeightPx / 2
             }
             .size(width = logoWidth.dp, height = logoHeight.dp)
-            .background(Color.White)
     ) {
         Image(painter, null, modifier = Modifier.fillMaxSize())
     }

@@ -24,7 +24,7 @@ fun ScreenSaverContent(
     val screenH = remember { specs.screenHeight.toFloat() * density.density }
 
     Box(
-        Modifier.fillMaxSize().background(Color.DarkGray),
+        Modifier.fillMaxSize().background(Color.Black),
         contentAlignment = Alignment.TopStart,
     ) {
         repeat(prefs.logoCount) {

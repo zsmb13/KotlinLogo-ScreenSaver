@@ -13,9 +13,9 @@ import kotlin.math.pow
 
 fun main() {
     val prefs = PrefValues(
-        logoSize = 100,
+        logoSize = 40,
         logoSet = 2,
-        logoCount = 10,
+        logoCount = 100,
         speed = 15,
     )
 
