@@ -1,4 +1,3 @@
-//import androidx.compose.material3.Text
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -80,21 +79,8 @@ fun attach(screenSaverView: ScreenSaverView, logos: MutableList<BouncingLogo2>) 
     lateinit var composeView: NSView
 
     val imageSet = imageSets[Preferences.LOGO_SET]
-    val imageUrl = imageSet.images[0]
-
-
-    val path = Path(imageUrl.substringAfter("file://"))
-    val systemFileSystem = SystemFileSystem
-    val source = systemFileSystem.source(path)
-    val bufferedSource = source.buffered()
-
-    val bytes = bufferedSource.use { it.readByteArray() }
-
-    // real values
     val specs = ScreenSpecs(screenSaverView)
-    val imageLoader = ImageLoader(specs)
 
-//    logos += List(Preferences.LOGO_COUNT) {
     logos += List(1) {
         BouncingLogo2(
             imageSet = imageSet,
@@ -107,7 +93,6 @@ fun attach(screenSaverView: ScreenSaverView, logos: MutableList<BouncingLogo2>) 
     ) {
         composeView = this.window.contentView!!
 
-        val svgPainter = bytes.decodeToSvgPainter(LocalDensity.current)
         var on by remember { mutableStateOf(false) }
         val color by animateColorAsState(if (!on) Color.Red else Color.Green)
 
@@ -142,10 +127,6 @@ fun attach(screenSaverView: ScreenSaverView, logos: MutableList<BouncingLogo2>) 
                     .size(100.dp)
                     .background(color)
                     .align(Alignment.Center)
-            )
-
-            Image(
-                svgPainter, null, modifier = Modifier.size(100.dp).align(Alignment.Center)
             )
         }
     }
