@@ -18,7 +18,7 @@ data class LogoWithSizes(
     val height: Float,
 )
 
-class ImageLoader(
+class ComposeImageLoader(
     private val density: Density,
     private val targetArea: Float,
 ) {
@@ -38,8 +38,8 @@ class ImageLoader(
                 val logoWidth = targetArea / logoHeight
                 LogoWithSizes(
                     painter = painter,
-                    width = logoWidth * density.density,
-                    height = logoHeight * density.density,
+                    width = logoWidth,
+                    height = logoHeight,
                 )
             }
         )

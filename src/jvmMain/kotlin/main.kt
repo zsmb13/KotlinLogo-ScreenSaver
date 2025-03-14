@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import compose.ImageLoader
+import compose.ComposeImageLoader
 import compose.PrefValues
 import compose.ScreenSaverContent
 import imagesets.CustomFolderImageSet
@@ -13,10 +13,10 @@ import kotlin.math.pow
 
 fun main() {
     val prefs = PrefValues(
-        logoSize = 20,
+        logoSize = 100,
         logoSet = 2,
-        logoCount = 1,
-        speed = 10,
+        logoCount = 10,
+        speed = 15,
     )
 
     val windowWidth = 800.0
@@ -29,6 +29,7 @@ fun main() {
             state = rememberWindowState(width = windowWidth.dp, height = windowHeight.dp),
             resizable = false,
             alwaysOnTop = true,
+            undecorated = true,
         ) {
             DevelopmentEntryPoint {
                 val specs = remember {
@@ -39,8 +40,8 @@ fun main() {
                     )
                 }
                 val density = LocalDensity.current
-                val imageLoader = remember {
-                    ImageLoader(
+                val composeImageLoader = remember {
+                    ComposeImageLoader(
                         density = density,
                         targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat()
                     )
@@ -48,7 +49,7 @@ fun main() {
                 ScreenSaverContent(
                     prefs = prefs,
                     imageSet = CustomFolderImageSet("/Users/zsmb/screensaver-images")!!,
-                    imgLoader = imageLoader,
+                    imgLoader = composeImageLoader,
                     specs = specs,
                 )
             }

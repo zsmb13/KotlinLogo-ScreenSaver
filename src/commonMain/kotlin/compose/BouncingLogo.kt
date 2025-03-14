@@ -32,7 +32,7 @@ import kotlin.random.Random
 @Composable
 fun BouncingLogo(
     imageSet: ImageSet,
-    imgLoader: ImageLoader,
+    imgLoader: ComposeImageLoader,
     screenW: Float,
     screenH: Float,
     pxScale: Double,
@@ -68,19 +68,22 @@ fun BouncingLogo(
         )
     }
 
+    val logoWidthPx = with(LocalDensity.current){ logoWidth.dp.toPx()}
+    val logoHeightPx = with(LocalDensity.current){ logoHeight.dp.toPx()}
+
     LaunchedEffect(Unit) {
         while (true) {
             val (currentX, currentY) = animXY.value
 
-            val right = currentX + logoWidth / 2
-            val left = currentX - logoWidth / 2
+            val right = currentX + logoWidthPx / 2
+            val left = currentX - logoWidthPx / 2
 
-            val bottom = currentY + logoHeight / 2
-            val top = currentY - logoHeight / 2
+            val bottom = currentY + logoHeightPx / 2
+            val top = currentY - logoHeightPx / 2
 
             debugLog { "screenW = $screenW, screenH = $screenH" }
             debugLog { "currentX = $currentX, currentY = $currentY" }
-            debugLog { "logoWidth = $logoWidth, logoHeight = $logoHeight" }
+            debugLog { "logoWidthPx = $logoWidthPx, logoHeightPx = $logoHeightPx" }
             debugLog { "right = $right, left = $left, bottom = $bottom, top = $top" }
 
             val remainingX = if (delta.x > 0) {
@@ -113,11 +116,12 @@ fun BouncingLogo(
         }
     }
 
+
     Column(
         Modifier
             .graphicsLayer {
-                translationX = animXY.value.x - logoWidth.dp.toPx() / 2
-                translationY = animXY.value.y - logoHeight.dp.toPx() / 2
+                translationX = animXY.value.x - logoWidthPx / 2
+                translationY = animXY.value.y - logoHeightPx / 2
             }
             .size(width = logoWidth.dp, height = logoHeight.dp)
             .background(Color.White)

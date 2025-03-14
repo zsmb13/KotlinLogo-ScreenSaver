@@ -7,7 +7,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.AppKit.NSApp
 import platform.AppKit.NSApplication
-import compose.ImageLoader
+import compose.ComposeImageLoader
 import config.GlobalPreferences
 import imagesets.imageSets
 import kotlin.math.pow
@@ -32,7 +32,7 @@ fun main() {
         ScreenSaverContent(
             prefs = prefs,
             imageSet = imageSets[prefs.logoSet],
-            imgLoader = ImageLoader(
+            imgLoader = ComposeImageLoader(
                 LocalDensity.current,
                 targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat()
             ),

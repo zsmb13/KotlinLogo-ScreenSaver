@@ -16,7 +16,7 @@ import imagesets.ImageSet
 fun ScreenSaverContent(
     prefs: PrefValues,
     imageSet: ImageSet,
-    imgLoader: ImageLoader,
+    imgLoader: ComposeImageLoader,
     specs: ScreenSpecs
 ) {
     val density = LocalDensity.current
@@ -24,7 +24,7 @@ fun ScreenSaverContent(
     val screenH = remember { specs.screenHeight.toFloat() * density.density }
 
     Box(
-        Modifier.fillMaxSize().background(Color.Black),
+        Modifier.fillMaxSize().background(Color.DarkGray),
         contentAlignment = Alignment.TopStart,
     ) {
         repeat(prefs.logoCount) {

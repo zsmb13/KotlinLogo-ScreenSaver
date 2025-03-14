@@ -52,7 +52,7 @@ class ComposeScreenSaverView : KotlinScreenSaverView() {
 
             val density = LocalDensity.current
             val imgLoader = remember(prefs, density) {
-                ImageLoader(
+                ComposeImageLoader(
                     density = density,
                     targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat(),
                 )
