@@ -2,6 +2,7 @@ package compose
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,13 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import imagesets.ImageSet
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.math.abs
 import kotlin.random.Random
@@ -52,13 +52,19 @@ fun BouncingLogo(
 
     val margin = remember { logoSize * pxScale }
 
-    val animX = remember { Animatable(Random.nextDouble(margin, screenW - margin).toFloat()) }
-    val animY = remember { Animatable(Random.nextDouble(margin, screenH - margin).toFloat()) }
+    val animXY = remember {
+        Animatable(
+            Offset(
+                Random.nextDouble(margin, screenW - margin).toFloat(),
+                Random.nextDouble(margin, screenH - margin).toFloat()
+            ),
+            typeConverter = Offset.VectorConverter,
+        )
+    }
 
     LaunchedEffect(Unit) {
         while (true) {
-            val currentX = animX.value
-            val currentY = animY.value
+            val (currentX, currentY) = animXY.value
 
             val remainingX =
                 if (xDelta > 0) screenW - (currentX + logoWidth / 2)
@@ -70,16 +76,13 @@ fun BouncingLogo(
             val xSmaller = remainingX < remainingY
             val remaining = if (xSmaller) remainingX else remainingY
             val duration = ((remaining / abs(yDelta)) * 60 / density / density).toInt()
+
             val xTarget = currentX + remaining * if (xDelta > 0) 1 else -1
             val yTarget = currentY + remaining * if (yDelta > 0) 1 else -1
 
-            awaitAll(
-                async {
-                    animX.animateTo(xTarget, tween(durationMillis = duration, easing = LinearEasing))
-                },
-                async {
-                    animY.animateTo(yTarget, tween(durationMillis = duration, easing = LinearEasing))
-                }
+            animXY.animateTo(
+                Offset(xTarget.toFloat(), yTarget.toFloat()),
+                tween(durationMillis = duration, easing = LinearEasing)
             )
 
             if (xSmaller) {
@@ -94,8 +97,8 @@ fun BouncingLogo(
     Column(
         Modifier
             .graphicsLayer {
-                translationX = animX.value - logoWidth.dp.toPx() / 2
-                translationY = animY.value - logoHeight.dp.toPx() / 2
+                translationX = animXY.value.x - logoWidth.dp.toPx() / 2
+                translationY = animXY.value.y - logoHeight.dp.toPx() / 2
             }
             .size(width = logoWidth.dp, height = logoHeight.dp)
             .background(Color.White)
