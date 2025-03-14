@@ -87,7 +87,7 @@ class ComposeScreenSaverView : KotlinScreenSaverView() {
                         screenW = screenW,
                         screenH = screenH,
                         pxScale = specs.pxScale,
-                        speed = prefs.speed,
+                        baseSpeed = prefs.speed,
                         logoSize = prefs.logoSize,
                     )
                 }

@@ -35,26 +35,31 @@ fun BouncingLogo(
     screenW: Float,
     screenH: Float,
     pxScale: Double,
-    speed: Int,
+    baseSpeed: Int,
     logoSize: Int,
 ) {
     val density = LocalDensity.current.density
-    var index by remember { mutableIntStateOf(Random.nextInt(imageSet.size)) }
+
+    var index by remember(imageSet) { mutableIntStateOf(Random.nextInt(imageSet.size)) }
 
     val (painter, logoWidth, logoHeight) = remember(imageSet, index) {
         imgLoader.loadImage(imageSet, index)
     }
 
-    val speed = remember { (pxScale * speed / 10.0 * Random.nextDouble(0.9, 1.1)).toFloat() }
-
-    var xDelta by remember { mutableStateOf(speed * if (Random.nextBoolean()) 1 else -1) }
-    var yDelta by remember { mutableStateOf(speed * if (Random.nextBoolean()) 1 else -1) }
-
-    val margin = remember { logoSize * pxScale }
-
-    val animXY = remember {
-        Animatable(
+    var delta by remember(pxScale, baseSpeed) {
+        val adjustedSpeed = (pxScale * baseSpeed / 10.0 * Random.nextDouble(0.9, 1.1)).toFloat()
+        mutableStateOf(
             Offset(
+                adjustedSpeed * if (Random.nextBoolean()) 1 else -1,
+                adjustedSpeed * if (Random.nextBoolean()) 1 else -1,
+            )
+        )
+    }
+
+    val animXY = remember(screenW, screenH, logoSize, pxScale) {
+        val margin = logoSize * pxScale
+        Animatable(
+            initialValue = Offset(
                 Random.nextDouble(margin, screenW - margin).toFloat(),
                 Random.nextDouble(margin, screenH - margin).toFloat()
             ),
@@ -66,29 +71,25 @@ fun BouncingLogo(
         while (true) {
             val (currentX, currentY) = animXY.value
 
-            val remainingX =
-                if (xDelta > 0) screenW - (currentX + logoWidth / 2)
-                else (currentX - logoWidth / 2)
-            val remainingY =
-                if (yDelta > 0) screenH - (currentY + logoHeight / 2)
-                else (currentY - logoHeight / 2)
+            val remainingX = if (delta.x > 0) screenW - (currentX + logoWidth / 2) else (currentX - logoWidth / 2)
+            val remainingY = if (delta.y > 0) screenH - (currentY + logoHeight / 2) else (currentY - logoHeight / 2)
 
             val xSmaller = remainingX < remainingY
             val remaining = if (xSmaller) remainingX else remainingY
-            val duration = ((remaining / abs(yDelta)) * 60 / density / density).toInt()
+            val duration = ((remaining / abs(delta.y)) * 60 / density / density).toInt()
 
-            val xTarget = currentX + remaining * if (xDelta > 0) 1 else -1
-            val yTarget = currentY + remaining * if (yDelta > 0) 1 else -1
+            val xTarget = currentX + remaining * if (delta.x > 0) 1 else -1
+            val yTarget = currentY + remaining * if (delta.y > 0) 1 else -1
 
             animXY.animateTo(
-                Offset(xTarget.toFloat(), yTarget.toFloat()),
-                tween(durationMillis = duration, easing = LinearEasing)
+                targetValue = Offset(xTarget, yTarget),
+                animationSpec = tween(durationMillis = duration, easing = LinearEasing),
             )
 
-            if (xSmaller) {
-                xDelta *= -1
+            delta = if (xSmaller) {
+                delta.copy(x = delta.x * -1)
             } else {
-                yDelta *= -1
+                delta.copy(y = delta.y * -1)
             }
             index = (index + 1) % imageSet.size
         }
