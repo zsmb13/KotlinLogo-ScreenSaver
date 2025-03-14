@@ -18,8 +18,6 @@ import kotlin.reflect.KMutableProperty0
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
-    public constructor(coder: platform.Foundation.NSCoder) : super(coder)
-
     private lateinit var sizeTextField: NSTextField
     private lateinit var speedTextField: NSTextField
     private lateinit var countTextField: NSTextField

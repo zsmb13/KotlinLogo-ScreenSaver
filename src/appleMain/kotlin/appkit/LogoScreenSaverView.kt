@@ -1,5 +1,9 @@
-import config.KotlinLogosPrefController
+package appkit
+
+import KotlinScreenSaverView
+import ScreenSpecs
 import config.GlobalPreferences
+import config.KotlinLogosPrefController
 import imagesets.imageSets
 import platform.AppKit.NSWindow
 import platform.Foundation.NSNotificationCenter

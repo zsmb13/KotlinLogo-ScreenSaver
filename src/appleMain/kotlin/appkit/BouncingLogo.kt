@@ -1,3 +1,5 @@
+package appkit
+
 import config.GlobalPreferences
 import imagesets.ImageSet
 import kotlinx.cinterop.ExperimentalForeignApi

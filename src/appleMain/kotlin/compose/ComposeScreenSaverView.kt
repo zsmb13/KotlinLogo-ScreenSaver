@@ -48,16 +48,14 @@ class ComposeScreenSaverView : KotlinScreenSaverView() {
             size = DpSize(specs.screenWidth.dp, specs.screenHeight.dp),
         ) {
             composeView = window.contentView!!
-            val imageSet = remember(prefs) { imageSets[prefs.logoSet] }
-
             val density = LocalDensity.current
-            val imgLoader = remember(prefs, density) {
+            val imageSet = remember(prefs) { imageSets[prefs.logoSet] }
+            val imgLoader = remember(prefs, density, specs) {
                 ComposeImageLoader(
                     density = density,
                     targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat(),
                 )
             }
-
             ScreenSaverContent(prefs, imageSet, imgLoader, specs)
         }
 

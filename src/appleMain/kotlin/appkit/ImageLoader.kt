@@ -1,3 +1,6 @@
+package appkit
+
+import ScreenSpecs
 import config.GlobalPreferences
 import config.UserDefaultsPreferences.APP_ID
 import imagesets.AssetImageSet
@@ -16,6 +19,12 @@ import kotlin.math.sqrt
 val bundle by lazy {
     NSBundle.bundleWithIdentifier(APP_ID)!!
 }
+
+data class ImageWithDimensions(
+    val nsImage: NSImage,
+    val logoWidth: Double,
+    val logoHeight: Double,
+)
 
 @OptIn(ExperimentalForeignApi::class)
 class ImageLoader(

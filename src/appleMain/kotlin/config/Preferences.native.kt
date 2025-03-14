@@ -15,7 +15,6 @@ object UserDefaultsPreferences : Preferences {
 
     override var CUSTOM_FOLDER by StringUserDefaultDelegate()
 
-    const val IS_DEBUG = true
     const val APP_ID = "co.zsmb.KotlinLogos"
 
     override fun reset() {
