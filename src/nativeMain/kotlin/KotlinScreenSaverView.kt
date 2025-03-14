@@ -1,3 +1,4 @@
+import compose.ComposeScreenSaverView
 import config.Preferences.APP_ID
 import platform.AppKit.NSWindow
 import platform.Foundation.NSBundle
