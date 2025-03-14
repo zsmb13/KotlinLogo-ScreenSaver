@@ -1,4 +1,4 @@
-import config.Preferences
+import config.GlobalPreferences
 import imagesets.ImageSet
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSImage
@@ -24,13 +24,13 @@ class BouncingLogo(
     private var xPos: Double
     private var yPos: Double
 
-    private val speed = specs.pxScale * Preferences.SPEED / 10.0 * Random.nextDouble(0.9, 1.1)
+    private val speed = specs.pxScale * GlobalPreferences.SPEED / 10.0 * Random.nextDouble(0.9, 1.1)
 
     private var xDelta = speed * if (Random.nextBoolean()) 1.0 else -1.0
     private var yDelta = speed * if (Random.nextBoolean()) 1.0 else -1.0
 
     init {
-        val margin = Preferences.LOGO_SIZE * specs.pxScale
+        val margin = GlobalPreferences.LOGO_SIZE * specs.pxScale
         xPos = Random.nextDouble(margin, specs.screenWidth - margin)
         yPos = Random.nextDouble(margin, specs.screenHeight - margin)
     }

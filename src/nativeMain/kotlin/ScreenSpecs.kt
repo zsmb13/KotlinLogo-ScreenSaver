@@ -3,10 +3,13 @@ import kotlinx.cinterop.useContents
 import platform.ScreenSaver.ScreenSaverView
 
 @OptIn(ExperimentalForeignApi::class)
-class ScreenSpecs(view: ScreenSaverView) {
+fun ScreenSpecs(view: ScreenSaverView): ScreenSpecs {
     val screenWidth = view.frame.useContents { this.size.width }
     val screenHeight = view.frame.useContents { this.size.height }
-
-    // Magic numbers 🪄✨
-    val pxScale = ((screenWidth / 1728) + (screenHeight / 1117)) / 2
+    return ScreenSpecs(
+        screenWidth,
+        screenHeight,
+        // Magic numbers 🪄✨
+        ((screenWidth / 1728) + (screenHeight / 1117)) / 2,
+    )
 }

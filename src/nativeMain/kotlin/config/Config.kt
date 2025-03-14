@@ -242,37 +242,37 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         setComboBox.apply {
             removeAllItems()
             addItemsWithObjectValues(imageSets.map(ImageSet::name))
-            selectItemAtIndex(Preferences.LOGO_SET.toLong())
+            selectItemAtIndex(GlobalPreferences.LOGO_SET.toLong())
         }
-        customFolder = Preferences.CUSTOM_FOLDER
+        customFolder = GlobalPreferences.CUSTOM_FOLDER
 
-        sizeStepper.setIntValue(Preferences.LOGO_SIZE)
-        countStepper.setIntValue(Preferences.LOGO_COUNT)
-        speedStepper.setIntValue(Preferences.SPEED)
+        sizeStepper.setIntValue(GlobalPreferences.LOGO_SIZE)
+        countStepper.setIntValue(GlobalPreferences.LOGO_COUNT)
+        speedStepper.setIntValue(GlobalPreferences.SPEED)
     }
 
     private fun saveValuesToPrefs() {
         imageSets.retainAll { it is AssetImageSet }
 
         if (customFolder.isNotEmpty()) {
-            val custom = CustomFolderImageSet.load(customFolder)
+            val custom = CustomFolderImageSet(customFolder)
             if (custom == null) {
                 // We had a custom folder set, but it fails to load, drop it
-                Preferences.CUSTOM_FOLDER = ""
-                Preferences.LOGO_SET = 0
+                GlobalPreferences.CUSTOM_FOLDER = ""
+                GlobalPreferences.LOGO_SET = 0
             } else {
                 // Successfully loaded custom folder, remember it and proceed as normal
                 imageSets.add(custom)
-                Preferences.CUSTOM_FOLDER = customFolder
-                Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
+                GlobalPreferences.CUSTOM_FOLDER = customFolder
+                GlobalPreferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
             }
         } else {
-            Preferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
+            GlobalPreferences.LOGO_SET = setComboBox.indexOfSelectedItem.toInt()
         }
 
-        Preferences.LOGO_SIZE = sizeStepper.intValue
-        Preferences.LOGO_COUNT = countStepper.intValue
-        Preferences.SPEED = speedStepper.intValue
+        GlobalPreferences.LOGO_SIZE = sizeStepper.intValue
+        GlobalPreferences.LOGO_COUNT = countStepper.intValue
+        GlobalPreferences.SPEED = speedStepper.intValue
     }
 
     @ObjCAction
@@ -300,7 +300,7 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
 
     @ObjCAction
     fun performReset() {
-        Preferences.reset()
+        GlobalPreferences.reset()
         loadValuesFromPrefs()
         window?.sheetParent?.endSheet(window!!)
     }

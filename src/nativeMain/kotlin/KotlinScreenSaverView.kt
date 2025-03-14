@@ -1,5 +1,5 @@
 import compose.ComposeScreenSaverView
-import config.Preferences.APP_ID
+import config.UserDefaultsPreferences.APP_ID
 import platform.AppKit.NSWindow
 import platform.Foundation.NSBundle
 import platform.ScreenSaver.ScreenSaverView

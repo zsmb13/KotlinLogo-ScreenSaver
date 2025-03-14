@@ -20,8 +20,10 @@ kotlin {
         }
     }
 
+    jvm()
+
     sourceSets {
-        nativeMain.dependencies {
+        commonMain.dependencies {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
             implementation(compose.ui)
             implementation(compose.runtime)
@@ -29,8 +31,10 @@ kotlin {
 
             implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.7.0")
 
-//            implementation(compose.material3)
             implementation(compose.components.resources)
+        }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
         }
     }
 
@@ -41,7 +45,6 @@ kotlin {
             }
         }
     }
-
 }
 
 tasks.wrapper {

@@ -5,18 +5,20 @@ import platform.Foundation.setValue
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-object Preferences {
-    var LOGO_SET by LongUserDefaultDelegate(0)
-    var LOGO_SIZE by LongUserDefaultDelegate(200)
-    var LOGO_COUNT by LongUserDefaultDelegate(1)
-    var SPEED by LongUserDefaultDelegate(10)
+actual fun Preferences(): Preferences = UserDefaultsPreferences
 
-    var CUSTOM_FOLDER by StringUserDefaultDelegate()
+object UserDefaultsPreferences : Preferences {
+    override var LOGO_SET by LongUserDefaultDelegate(0)
+    override var LOGO_SIZE by LongUserDefaultDelegate(200)
+    override var LOGO_COUNT by LongUserDefaultDelegate(1)
+    override var SPEED by LongUserDefaultDelegate(10)
+
+    override var CUSTOM_FOLDER by StringUserDefaultDelegate()
 
     const val IS_DEBUG = true
     const val APP_ID = "co.zsmb.KotlinLogos"
 
-    internal fun reset() {
+    override fun reset() {
         LOGO_SET = 0
         LOGO_SIZE = 200
         LOGO_COUNT = 1
