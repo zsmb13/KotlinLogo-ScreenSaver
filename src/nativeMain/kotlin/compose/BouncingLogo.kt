@@ -75,20 +75,10 @@ fun BouncingLogo(
 
             awaitAll(
                 async {
-                    animX.animateTo(
-                        xTarget, tween(
-                            durationMillis = duration,
-                            easing = LinearEasing,
-                        )
-                    )
+                    animX.animateTo(xTarget, tween(durationMillis = duration, easing = LinearEasing))
                 },
                 async {
-                    animY.animateTo(
-                        yTarget, tween(
-                            durationMillis = duration,
-                            easing = LinearEasing,
-                        )
-                    )
+                    animY.animateTo(yTarget, tween(durationMillis = duration, easing = LinearEasing))
                 }
             )
 
