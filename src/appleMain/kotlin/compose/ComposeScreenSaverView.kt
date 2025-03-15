@@ -21,6 +21,7 @@ import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.ScreenSaver.ScreenSaverView
 import util.Debouncer
+import util.debugLog
 import kotlin.math.pow
 
 
@@ -59,6 +60,9 @@ class ComposeScreenSaverView : KotlinScreenSaverView() {
         ) {
             if (composeView == null && window.contentView != null) {
                 composeView = window.contentView
+                debugLog { "Set composeView: $composeView" }
+            } else {
+                debugLog { "Not setting composeView: $composeView, ${window.contentView}" }
             }
 
             val density = LocalDensity.current
@@ -76,9 +80,13 @@ class ComposeScreenSaverView : KotlinScreenSaverView() {
 
         val cv = composeView
         if (cv != null) {
-            cv.removeFromSuperview()
+            debugLog { "Attaching $cv to screen saver" }
+//            cv.removeFromSuperview()
             cv.frame = NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight)
             screenSaverView.addSubview(cv)
+            debugLog { "Attached $cv to screen saver" }
+        } else {
+            debugLog { "Can't attach to screen saver" }
         }
     }
 

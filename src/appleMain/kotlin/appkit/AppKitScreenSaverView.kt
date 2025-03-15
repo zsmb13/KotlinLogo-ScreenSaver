@@ -12,7 +12,7 @@ import platform.ScreenSaver.ScreenSaverView
 import util.Debouncer
 import util.debugLog
 
-class LogoScreenSaverView : KotlinScreenSaverView() {
+class AppKitScreenSaverView : KotlinScreenSaverView() {
     private val preferencesController by lazy { KotlinLogosPrefController() }
     override val configureSheet: NSWindow?
         get() = preferencesController.window

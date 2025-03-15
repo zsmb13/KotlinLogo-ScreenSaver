@@ -11,7 +11,7 @@ interface Preferences {
     fun reset()
 }
 
-const val DEBUG_MODE = false
+const val DEBUG_MODE = true
 
 val GlobalPreferences = Preferences()
 

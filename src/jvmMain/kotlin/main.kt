@@ -15,15 +15,12 @@ import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import kotlin.math.pow
 
 fun main() {
-    val windowWidth = 800.0
-    val windowHeight = 600.0
-
     application {
+        val windowState = rememberWindowState(width = 800.dp, height = 600.dp)
         Window(
             title = "KotlinLogo JVM",
             onCloseRequest = ::exitApplication,
-            state = rememberWindowState(width = windowWidth.dp, height = windowHeight.dp),
-            resizable = false,
+            state = windowState,
             alwaysOnTop = true,
         ) {
             DevelopmentEntryPoint {
@@ -32,33 +29,33 @@ fun main() {
                         PrefValues(
                             logoSize = 100,
                             logoSet = -1, // unused
-                            logoCount = 5,
-                            speed = 15,
+                            logoCount = 100,
+                            speed = 20,
                         )
                     )
                 }
-                val specs = remember {
+                val specs = remember(windowState.size) {
                     ScreenSpecs(
-                        screenWidth = windowWidth,
-                        screenHeight = windowHeight - window.insets.top,
+                        screenWidth = windowState.size.width.value.toDouble(),
+                        screenHeight = windowState.size.height.value.toDouble() - window.insets.top,
                         pxScale = 1.0,
                     )
                 }
                 val density = LocalDensity.current
-                val composeImageLoader = remember {
+                val composeImageLoader = remember(density, prefs, specs) {
                     ComposeImageLoader(
                         density = density,
                         targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat()
                     )
                 }
+                val imageSet = remember {
+                    CustomFolderImageSet("/Users/zsmb/screensaver-images")!!
+                }
                 ScreenSaverContent(
                     prefs = prefs,
-                    imageSet = CustomFolderImageSet("/Users/zsmb/screensaver-images")!!,
+                    imageSet = imageSet,
                     imgLoader = composeImageLoader,
                     specs = specs,
-                    onClick = {
-                        prefs = prefs.copy(logoCount = prefs.logoCount + 1)
-                    }
                 )
             }
         }

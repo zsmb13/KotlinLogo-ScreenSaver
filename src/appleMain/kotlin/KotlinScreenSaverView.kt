@@ -1,3 +1,4 @@
+import appkit.AppKitScreenSaverView
 import compose.ComposeScreenSaverView
 import config.UserDefaultsPreferences.APP_ID
 import platform.AppKit.NSWindow
@@ -5,9 +6,12 @@ import platform.Foundation.NSBundle
 import platform.ScreenSaver.ScreenSaverView
 import util.debugLog
 
-fun create(): KotlinScreenSaverView = ComposeScreenSaverView().also {
-    debugLog { "Created KotlinScreenSaverView" }
-}
+fun create(): KotlinScreenSaverView =
+//    AppKitScreenSaverView()
+    ComposeScreenSaverView()
+        .also {
+            debugLog { "Created KotlinScreenSaverView" }
+        }
 
 abstract class KotlinScreenSaverView {
     protected lateinit var view: ScreenSaverView

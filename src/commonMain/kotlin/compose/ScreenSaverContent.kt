@@ -23,14 +23,9 @@ fun ScreenSaverContent(
     specs: ScreenSpecs,
     onClick: () -> Unit = {},
 ) {
-    println("KOTLIN: prefs is $prefs")
-    LaunchedEffect(prefs) {
-        println("KOTLIN: pref key: $prefs")
-    }
-
     val density = LocalDensity.current
-    val screenW = remember { specs.screenWidth.toFloat() * density.density }
-    val screenH = remember { specs.screenHeight.toFloat() * density.density }
+    val screenW = remember(specs, density) { specs.screenWidth.toFloat() * density.density }
+    val screenH = remember(specs, density) { specs.screenHeight.toFloat() * density.density }
 
     Box(
         Modifier.fillMaxSize()
@@ -38,7 +33,6 @@ fun ScreenSaverContent(
             .background(if (DEBUG_MODE) Color.DarkGray else Color.Black),
         contentAlignment = Alignment.TopStart,
     ) {
-        println("KOTLIN: pref count: ${prefs.logoCount}")
         repeat(prefs.logoCount) {
             BouncingLogo(
                 imageSet = imageSet,
