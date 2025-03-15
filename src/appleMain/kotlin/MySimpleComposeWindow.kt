@@ -37,7 +37,6 @@ interface WindowScope {
 class DisposableComposeWindow(
     title: String = "MyComposeWindow",
     size: DpSize = DpSize(800.dp, 600.dp),
-    show: Boolean = true,
 ) : WindowScope {
     private val skiaLayer = SkiaLayer()
     private val scene = CanvasLayersComposeScene(
@@ -99,11 +98,6 @@ class DisposableComposeWindow(
 
         skiaLayer.renderDelegate = renderDelegate
         skiaLayer.attachTo(view)
-
-        if (show) {
-            window.center()
-            window.makeKeyAndOrderFront(null)
-        }
 
         scene.density = Density(window.backingScaleFactor.toFloat())
     }

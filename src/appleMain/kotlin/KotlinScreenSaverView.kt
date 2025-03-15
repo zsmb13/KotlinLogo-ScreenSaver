@@ -80,7 +80,7 @@ class DynamicScreenSaverView : KotlinScreenSaverView() {
         // Create and initialize new implementation
         activeImpl = if (useCompose) {
             debugLog { "Switching to Compose implementation" }
-            ComposeScreenSaverView(view, show = true)
+            ComposeScreenSaverView(view)
         } else {
             debugLog { "Switching to AppKit implementation" }
             AppKitScreenSaverView(view)

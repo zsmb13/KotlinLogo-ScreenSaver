@@ -19,7 +19,7 @@ class AppKitScreenSaverView(
 ) : ScreenSaverImpl {
     val specs = ScreenSpecs(screenSaverView)
 
-    override val view: NSView = run {
+    val view: NSView = run {
         NSView(
             NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight)
         )

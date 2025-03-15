@@ -33,7 +33,6 @@ private fun readPrefValues(): PrefValues = PrefValues(
 @OptIn(ExperimentalForeignApi::class)
 class ComposeScreenSaverView(
     private val screenSaverView: NSView,
-    private val show: Boolean,
 ) : ScreenSaverImpl {
     var composeView: NSView? = null
     var observer: NSObjectProtocol? = null
@@ -54,7 +53,6 @@ class ComposeScreenSaverView(
 
         composeWindow = DisposableComposeWindow(
             size = DpSize(specs.screenWidth.dp, specs.screenHeight.dp),
-            show = show,
         )
         composeWindow!!.setContent {
             if (composeView == null && window.contentView != null) {
@@ -87,9 +85,6 @@ class ComposeScreenSaverView(
             debugLog { "Can't attach to screen saver" }
         }
     }
-
-    override val view: NSView
-        get() = composeView!!
 
     override fun dispose() {
         composeWindow?.dispose()

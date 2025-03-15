@@ -73,7 +73,7 @@ private fun dynamicMainFun() {
 
     GlobalScope.launch(Dispatchers.Main) {
         while (true) {
-            delay(5.seconds)
+            delay(2.seconds)
             composeImpl = !composeImpl
             setImpl(contentView)
         }
@@ -96,7 +96,7 @@ private fun setImpl(contentView: NSView) {
     // Create and initialize new implementation
     activeImpl = if (composeImpl) {
         debugLog { "Switching to Compose implementation" }
-        ComposeScreenSaverView(contentView, show = false)
+        ComposeScreenSaverView(contentView)
     } else {
         debugLog { "Switching to AppKit implementation" }
         AppKitScreenSaverView(contentView)
