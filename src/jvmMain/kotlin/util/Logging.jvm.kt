@@ -1,6 +1,9 @@
 package util
 
+import config.DEBUG_MODE
+
 actual inline fun debugLog(lazyMessage: () -> String) {
-    // TODO review jvm logger
-    println(lazyMessage())
+    if (DEBUG_MODE) {
+        println(lazyMessage())
+    }
 }

@@ -1,5 +1,6 @@
 package appkit
 
+import ScreenSpecs
 import config.GlobalPreferences
 import imagesets.ImageSet
 import kotlinx.cinterop.ExperimentalForeignApi

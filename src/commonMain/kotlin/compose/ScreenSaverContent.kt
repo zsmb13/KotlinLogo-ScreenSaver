@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import config.DEBUG_MODE
 import imagesets.ImageSet
 
 @Composable
@@ -24,7 +25,8 @@ fun ScreenSaverContent(
     val screenH = remember { specs.screenHeight.toFloat() * density.density }
 
     Box(
-        Modifier.fillMaxSize().background(Color.Black),
+        Modifier.fillMaxSize()
+            .background(if (DEBUG_MODE) Color.DarkGray else Color.Black),
         contentAlignment = Alignment.TopStart,
     ) {
         repeat(prefs.logoCount) {

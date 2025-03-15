@@ -29,13 +29,12 @@ fun main() {
             state = rememberWindowState(width = windowWidth.dp, height = windowHeight.dp),
             resizable = false,
             alwaysOnTop = true,
-            undecorated = true,
         ) {
             DevelopmentEntryPoint {
                 val specs = remember {
                     ScreenSpecs(
                         screenWidth = windowWidth,
-                        screenHeight = windowHeight,
+                        screenHeight = windowHeight - window.insets.top,
                         pxScale = 1.0,
                     )
                 }

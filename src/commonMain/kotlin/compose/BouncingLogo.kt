@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import config.DEBUG_MODE
 import imagesets.ImageSet
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import util.debugLog
@@ -123,6 +124,7 @@ fun BouncingLogo(
                 translationX = animXY.value.x - logoWidthPx / 2
                 translationY = animXY.value.y - logoHeightPx / 2
             }
+            .background(if (DEBUG_MODE) Color.White else Color.Transparent)
             .size(width = logoWidth.dp, height = logoHeight.dp)
     ) {
         Image(painter, null, modifier = Modifier.fillMaxSize())
