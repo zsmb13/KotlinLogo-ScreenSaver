@@ -15,15 +15,6 @@ import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import kotlin.math.pow
 
 fun main() {
-    var prefs by mutableStateOf(
-        PrefValues(
-            logoSize = 40,
-            logoSet = -1, // unused
-            logoCount = 5,
-            speed = 15,
-        )
-    )
-
     val windowWidth = 800.0
     val windowHeight = 600.0
 
@@ -36,6 +27,16 @@ fun main() {
             alwaysOnTop = true,
         ) {
             DevelopmentEntryPoint {
+                var prefs by remember {
+                    mutableStateOf(
+                        PrefValues(
+                            logoSize = 100,
+                            logoSet = -1, // unused
+                            logoCount = 5,
+                            speed = 15,
+                        )
+                    )
+                }
                 val specs = remember {
                     ScreenSpecs(
                         screenWidth = windowWidth,
