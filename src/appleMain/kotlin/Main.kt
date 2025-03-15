@@ -54,6 +54,7 @@ private fun dynamicMainFun() {
         backing = NSBackingStoreBuffered,
         defer = true
     )
+    window.title = "Dynamic screen saver"
     val contentView = window.contentView!!
 
 //    activeImpl = AppKitScreenSaverView(contentView, false)

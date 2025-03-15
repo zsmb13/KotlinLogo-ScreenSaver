@@ -1,5 +1,6 @@
 package compose
 
+import DisposableComposeWindow
 import ScreenSaverImpl
 import ScreenSpecs
 import androidx.compose.runtime.getValue
@@ -9,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.MyComposeWindow
 import config.GlobalPreferences
 import imagesets.imageSets
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -38,7 +38,7 @@ class ComposeScreenSaverView(
     var composeView: NSView? = null
     var observer: NSObjectProtocol? = null
 
-    var mcw: MyComposeWindow? = null
+    var composeWindow: DisposableComposeWindow? = null
 
     init {
         val specs = ScreenSpecs(screenSaverView)
@@ -52,10 +52,11 @@ class ComposeScreenSaverView(
                 }
             }
 
-         mcw = MyComposeWindow(
+        composeWindow = DisposableComposeWindow(
             size = DpSize(specs.screenWidth.dp, specs.screenHeight.dp),
-             show = show,
-        ) {
+            show = show,
+        )
+        composeWindow!!.setContent {
             if (composeView == null && window.contentView != null) {
                 composeView = window.contentView
                 debugLog { "Set composeView: $composeView" }
@@ -91,9 +92,8 @@ class ComposeScreenSaverView(
         get() = composeView!!
 
     override fun dispose() {
-        mcw?.dispose()
-        mcw?.window?.close()
-        mcw  = null
+        composeWindow?.dispose()
+        composeWindow = null
 
         observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
         observer = null
