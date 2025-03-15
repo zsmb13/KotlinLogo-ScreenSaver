@@ -1,10 +1,11 @@
 package util
 
-import config.GlobalPreferences
-import platform.Foundation.NSLogv
+import config.DEBUG_MODE
+import platform.Foundation.NSLog
 
 actual inline fun debugLog(lazyMessage: () -> String) {
-//    if (GlobalPreferences.IS_DEBUG) {
-//        NSLog("KOTLIN: ${lazyMessage()}")
-//    }
+    return
+    if (DEBUG_MODE) {
+        NSLog("KOTLIN: ${lazyMessage()}")
+    }
 }

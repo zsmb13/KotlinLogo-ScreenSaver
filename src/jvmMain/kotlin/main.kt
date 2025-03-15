@@ -1,4 +1,7 @@
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -12,11 +15,13 @@ import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import kotlin.math.pow
 
 fun main() {
-    val prefs = PrefValues(
-        logoSize = 40,
-        logoSet = 2,
-        logoCount = 100,
-        speed = 15,
+    var prefs by mutableStateOf(
+        PrefValues(
+            logoSize = 40,
+            logoSet = -1, // unused
+            logoCount = 5,
+            speed = 15,
+        )
     )
 
     val windowWidth = 800.0
@@ -50,6 +55,9 @@ fun main() {
                     imageSet = CustomFolderImageSet("/Users/zsmb/screensaver-images")!!,
                     imgLoader = composeImageLoader,
                     specs = specs,
+                    onClick = {
+                        prefs = prefs.copy(logoCount = prefs.logoCount + 1)
+                    }
                 )
             }
         }

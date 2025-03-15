@@ -10,9 +10,8 @@ plugins {
 kotlin {
     val xcf = XCFramework("KotlinLogo")
 
-//    val targets = listOf(macosX64(), macosArm64())
-    val target = macosArm64()
-    target.let { target ->
+    val targets = listOf(macosX64(), macosArm64())
+    targets.forEach { target ->
         target.binaries.framework {
             binaryOption("bundleId", "co.zsmb.KotlinLogos")
             baseName = "KotlinLogo"
@@ -39,8 +38,8 @@ kotlin {
         }
     }
 
-    target.apply {
-        binaries {
+    targets.forEach {
+        it.binaries {
             executable {
                 entryPoint = "main"
             }

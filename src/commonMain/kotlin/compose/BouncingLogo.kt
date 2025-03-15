@@ -50,6 +50,7 @@ fun BouncingLogo(
 
     var delta by remember(pxScale, baseSpeed) {
         val adjustedSpeed = (pxScale * baseSpeed / 10.0 * Random.nextDouble(0.9, 1.1)).toFloat()
+        println("Base Speed: $baseSpeed, adjusted: $adjustedSpeed")
         mutableStateOf(
             Offset(
                 adjustedSpeed * if (Random.nextBoolean()) 1 else -1,
