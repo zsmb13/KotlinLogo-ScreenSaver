@@ -7,13 +7,14 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSImage
 import platform.AppKit.NSImageScaleProportionallyUpOrDown
 import platform.AppKit.NSImageView
+import platform.AppKit.NSView
 import platform.Foundation.NSMakeRect
-import platform.ScreenSaver.ScreenSaverView
+import util.debugLog
 import kotlin.random.Random
 
 @OptIn(ExperimentalForeignApi::class)
 class BouncingLogo(
-    private val view: ScreenSaverView,
+    private val view: NSView,
     private val imageSet: ImageSet,
     private val specs: ScreenSpecs,
     private val imageLoader: ImageLoader,
@@ -36,6 +37,8 @@ class BouncingLogo(
         val margin = GlobalPreferences.LOGO_SIZE * specs.pxScale
         xPos = Random.nextDouble(margin, specs.screenWidth - margin)
         yPos = Random.nextDouble(margin, specs.screenHeight - margin)
+
+        debugLog { "Generated logo at $xPos,$yPos" }
     }
 
     private val right: Double get() = xPos + logoWidth / 2
@@ -50,6 +53,10 @@ class BouncingLogo(
         image = updateImage()
         frame = NSMakeRect(x = xPos - logoWidth / 2, y = yPos - logoHeight / 2, w = logoWidth, h = logoHeight)
         view.addSubview(this)
+    }
+
+    init {
+        debugLog { "Inited BouncingLogo" }
     }
 
     fun draw() {
@@ -71,6 +78,8 @@ class BouncingLogo(
     private fun bounce(side: Side) {
         index = (index + 1) % imageSet.size
         imageView.image = updateImage()
+
+        debugLog { "Bouncing on $side" }
 
         when (side) {
             Side.Left -> {

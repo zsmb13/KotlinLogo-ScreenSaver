@@ -5,6 +5,7 @@ interface Preferences {
     var LOGO_SIZE : Int
     var LOGO_COUNT : Int
     var SPEED : Int
+    var USE_COMPOSE : Boolean
 
     var CUSTOM_FOLDER : String
 

@@ -27,6 +27,7 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
     private lateinit var countStepper: NSStepper
 
     private lateinit var setComboBox: NSComboBox
+    private lateinit var useComposeCheckbox: NSButton
     private var customFolder: String = ""
 
     constructor() : super(
@@ -80,6 +81,8 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
                 ::speedStepper
             ), NSStackViewGravityTop
         )
+
+        mainStack.addView(createCheckbox("Use Compose UI", ::useComposeCheckbox), NSStackViewGravityTop)
 
         mainStack.addView(createButtonStack(), NSStackViewGravityTrailing)
         mainStack.setEdgeInsets(
@@ -231,6 +234,22 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         }
     }
 
+    private fun createCheckbox(title: String, checkboxProp: KMutableProperty0<NSButton>): NSStackView {
+        val stack = NSStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+
+        val checkbox = NSButton().apply {
+            this.title = title
+            this.setButtonType(NSButtonTypeSwitch)
+            this.state = NSControlStateValueOff
+        }
+        checkboxProp.set(checkbox)
+
+        stack.addView(checkbox, NSStackViewGravityCenter)
+
+        return stack
+    }
+
     private fun NSControl.setListener(selfFunc: KFunction<Unit>) {
         target = this@KotlinLogosPrefController
         action = NSSelectorFromString(selfFunc.name)
@@ -247,6 +266,8 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         sizeStepper.setIntValue(GlobalPreferences.LOGO_SIZE)
         countStepper.setIntValue(GlobalPreferences.LOGO_COUNT)
         speedStepper.setIntValue(GlobalPreferences.SPEED)
+
+        useComposeCheckbox.state = if (GlobalPreferences.USE_COMPOSE) NSControlStateValueOn else NSControlStateValueOff
     }
 
     private fun saveValuesToPrefs() {
@@ -271,6 +292,7 @@ class KotlinLogosPrefController : NSWindowController, NSWindowDelegateProtocol {
         GlobalPreferences.LOGO_SIZE = sizeStepper.intValue
         GlobalPreferences.LOGO_COUNT = countStepper.intValue
         GlobalPreferences.SPEED = speedStepper.intValue
+        GlobalPreferences.USE_COMPOSE = useComposeCheckbox.state == NSControlStateValueOn
     }
 
     @ObjCAction

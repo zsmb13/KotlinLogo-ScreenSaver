@@ -36,6 +36,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
+        nativeMain.dependencies {
+            implementation(libs.kotlin.reflect)
+        }
     }
 
     targets.forEach {

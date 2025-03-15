@@ -1,6 +1,6 @@
 package compose
 
-import KotlinScreenSaverView
+import ScreenSaverImpl
 import ScreenSpecs
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,17 +9,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.MyComposeWindow
 import config.GlobalPreferences
-import config.KotlinLogosPrefController
 import imagesets.imageSets
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSView
-import platform.AppKit.NSWindow
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
-import platform.ScreenSaver.ScreenSaverView
+import platform.darwin.NSObjectProtocol
 import util.Debouncer
 import util.debugLog
 import kotlin.math.pow
@@ -32,31 +30,31 @@ private fun readPrefValues(): PrefValues = PrefValues(
     speed = GlobalPreferences.SPEED,
 )
 
+@OptIn(ExperimentalForeignApi::class)
+class ComposeScreenSaverView(
+    private val screenSaverView: NSView,
+    private val show: Boolean,
+) : ScreenSaverImpl {
+    var composeView: NSView? = null
+    var observer: NSObjectProtocol? = null
 
-class ComposeScreenSaverView : KotlinScreenSaverView() {
-    private val preferencesController by lazy { KotlinLogosPrefController() }
-    override val configureSheet: NSWindow?
-        get() = preferencesController.window
+    var mcw: MyComposeWindow? = null
 
-    @OptIn(ExperimentalForeignApi::class)
-    override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
-        super.init(screenSaverView, isPreview)
-
-        var composeView: NSView? = null
-
+    init {
         val specs = ScreenSpecs(screenSaverView)
         var prefs by mutableStateOf(readPrefValues())
 
-        val debouncer = Debouncer(delayMs = 500)
-        NSNotificationCenter.defaultCenter
+        val debouncer = Debouncer()
+        observer = NSNotificationCenter.defaultCenter
             .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
                 debouncer.execute {
                     prefs = readPrefValues()
                 }
             }
 
-        Window(
+         mcw = MyComposeWindow(
             size = DpSize(specs.screenWidth.dp, specs.screenHeight.dp),
+             show = show,
         ) {
             if (composeView == null && window.contentView != null) {
                 composeView = window.contentView
@@ -81,13 +79,27 @@ class ComposeScreenSaverView : KotlinScreenSaverView() {
         val cv = composeView
         if (cv != null) {
             debugLog { "Attaching $cv to screen saver" }
-//            cv.removeFromSuperview()
             cv.frame = NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight)
             screenSaverView.addSubview(cv)
             debugLog { "Attached $cv to screen saver" }
         } else {
             debugLog { "Can't attach to screen saver" }
         }
+    }
+
+    override val view: NSView
+        get() = composeView!!
+
+    override fun dispose() {
+        mcw?.dispose()
+        mcw?.window?.close()
+        mcw  = null
+
+        observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
+        observer = null
+
+        composeView?.removeFromSuperview()
+        composeView = null
     }
 
     override fun animateOneFrame() = Unit

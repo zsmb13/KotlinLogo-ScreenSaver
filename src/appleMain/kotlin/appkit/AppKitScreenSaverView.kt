@@ -1,31 +1,38 @@
 package appkit
 
-import KotlinScreenSaverView
+import ScreenSaverImpl
 import ScreenSpecs
 import config.GlobalPreferences
-import config.KotlinLogosPrefController
 import imagesets.imageSets
-import platform.AppKit.NSWindow
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.AppKit.NSView
+import platform.Foundation.NSMakeRect
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
-import platform.ScreenSaver.ScreenSaverView
+import platform.darwin.NSObjectProtocol
 import util.Debouncer
 import util.debugLog
 
-class AppKitScreenSaverView : KotlinScreenSaverView() {
-    private val preferencesController by lazy { KotlinLogosPrefController() }
-    override val configureSheet: NSWindow?
-        get() = preferencesController.window
+@OptIn(ExperimentalForeignApi::class)
+class AppKitScreenSaverView(
+    private val screenSaverView: NSView,
+) : ScreenSaverImpl {
+    val specs = ScreenSpecs(screenSaverView)
 
-    override fun init(screenSaverView: ScreenSaverView, isPreview: Boolean) {
-        super.init(screenSaverView, isPreview)
-        debugLog { "LogoScreenSaverView inited, isPreview: $isPreview" }
-        screenSaverView.animationTimeInterval = 1 / 60.0
-        setupUserDefaultsObserver()
-        initLogos()
+    override val view: NSView = run {
+        NSView(
+            NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight)
+        )
     }
 
     private var logos: List<BouncingLogo> = emptyList()
+
+    init {
+        debugLog { "LogoScreenSaverView inited ($this)" }
+        setupUserDefaultsObserver()
+        initLogos()
+        screenSaverView.addSubview(view)
+    }
 
     override fun animateOneFrame() {
         logos.forEach(BouncingLogo::animateFrame)
@@ -33,9 +40,8 @@ class AppKitScreenSaverView : KotlinScreenSaverView() {
     }
 
     private fun initLogos() {
-        logos.forEach(BouncingLogo::dispose)
+        disposeLogos()
 
-        val specs = ScreenSpecs(view)
         val imageLoader = ImageLoader(specs)
         logos = List(GlobalPreferences.LOGO_COUNT) {
             BouncingLogo(
@@ -45,14 +51,36 @@ class AppKitScreenSaverView : KotlinScreenSaverView() {
                 imageLoader = imageLoader,
             )
         }
+        debugLog { "Created ${logos.size} new logos" }
     }
 
-    private val debouncer = Debouncer(delayMs = 500)
+    private val debouncer = Debouncer()
+
+    private fun disposeLogos() {
+        val oldLogos = logos
+        logos = emptyList()
+        oldLogos.forEach(BouncingLogo::dispose)
+        debugLog { "Disposed ${oldLogos.size} old logos" }
+    }
+
+    override fun dispose() {
+        removeUserDefaultsObserver()
+        disposeLogos()
+        view.removeFromSuperview()
+    }
+
+    var observer: NSObjectProtocol? = null
 
     private fun setupUserDefaultsObserver() {
-        NSNotificationCenter.defaultCenter
+        observer = NSNotificationCenter.defaultCenter
             .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
+                debugLog { "Pref notification in AppKitScreenSaverView" }
                 debouncer.execute { initLogos() }
             }
+    }
+
+    private fun removeUserDefaultsObserver() {
+        observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
+        observer = null
     }
 }
