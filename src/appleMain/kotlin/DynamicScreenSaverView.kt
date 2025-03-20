@@ -29,13 +29,13 @@ class DynamicScreenSaverView : KotlinScreenSaverView() {
         switchImplementation()
 
         // "demo mode"
-        GlobalScope.launch(Dispatchers.Main) {
-            while (true) {
-                delay(4.seconds)
-                GlobalPreferences.USE_COMPOSE = !useCompose
-                switchImplementation()
-            }
-        }
+//        GlobalScope.launch(Dispatchers.Main) {
+//            while (true) {
+//                delay(4.seconds)
+//                GlobalPreferences.USE_COMPOSE = !useCompose
+//                switchImplementation()
+//            }
+//        }
     }
 
     override fun animateOneFrame() {
@@ -84,20 +84,17 @@ class DynamicScreenSaverView : KotlinScreenSaverView() {
             AppKitScreenSaverView(view)
         }
         if (isAnimating) {
-            debugLog { "Start 1, activeImpl $activeImpl" }
             activeImpl?.start()
-            debugLog { "Start 2, activeImpl $activeImpl" }
-        } else {
-            debugLog { "Start failed, activeImpl $activeImpl" }
         }
     }
 
     private fun setupUserDefaultsObserver() {
-        NSNotificationCenter.Companion.defaultCenter
+        NSNotificationCenter.defaultCenter
             .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
                 debugLog { "Pref notification in DynamicScreenSaverView" }
                 debouncer.execute {
                     switchImplementation()
+                    activeImpl?.prefsChanged()
                 }
             }
     }

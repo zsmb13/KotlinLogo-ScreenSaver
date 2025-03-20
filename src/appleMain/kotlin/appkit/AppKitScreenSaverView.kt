@@ -6,12 +6,8 @@ import config.GlobalPreferences
 import imagesets.imageSets
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSView
-import platform.CoreServices.nsvErr
 import platform.Foundation.NSMakeRect
-import platform.Foundation.NSNotificationCenter
-import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.darwin.NSObjectProtocol
-import util.Debouncer
 import util.debugLog
 
 @OptIn(ExperimentalForeignApi::class)
@@ -26,7 +22,6 @@ class AppKitScreenSaverView(
 
     override fun start() {
         debugLog { "LogoScreenSaverView initing ($this)" }
-        setupUserDefaultsObserver()
 
         view?.removeFromSuperview()
         val nsView = NSView(NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight))
@@ -64,8 +59,6 @@ class AppKitScreenSaverView(
         debugLog { "Created ${logos.size} new logos" }
     }
 
-    private val debouncer = Debouncer()
-
     private fun disposeLogos() {
         val oldLogos = logos
         logos = emptyList()
@@ -74,7 +67,6 @@ class AppKitScreenSaverView(
     }
 
     override fun dispose() {
-        removeUserDefaultsObserver()
         disposeLogos()
         view?.removeFromSuperview()
         view = null
@@ -82,16 +74,7 @@ class AppKitScreenSaverView(
 
     var observer: NSObjectProtocol? = null
 
-    private fun setupUserDefaultsObserver() {
-        observer = NSNotificationCenter.defaultCenter
-            .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
-                debugLog { "Pref notification in AppKitScreenSaverView" }
-                debouncer.execute { initLogos() }
-            }
-    }
-
-    private fun removeUserDefaultsObserver() {
-        observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
-        observer = null
+    override fun prefsChanged() {
+        initLogos()
     }
 }

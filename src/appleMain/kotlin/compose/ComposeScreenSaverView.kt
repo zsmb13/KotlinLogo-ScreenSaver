@@ -34,10 +34,11 @@ private fun readPrefValues(): PrefValues = PrefValues(
 class ComposeScreenSaverView(
     private val screenSaverView: NSView,
 ) : ScreenSaverImpl {
-    var composeView: NSView? = null
-    var observer: NSObjectProtocol? = null
+    private var composeView: NSView? = null
 
-    var composeWindow: ComposeContentHolder? = null
+    private var composeWindow: ComposeContentHolder? = null
+
+    private var prefs by mutableStateOf(readPrefValues())
 
     override fun start() {
         // TODO REMOVE LATER
@@ -46,31 +47,18 @@ class ComposeScreenSaverView(
         debugLog { "initing ComposeScreenSaverView" }
 
         val specs = ScreenSpecs(screenSaverView)
-        var prefs by mutableStateOf(readPrefValues())
 
         debugLog { "initing ComposeScreenSaverView 2" }
         debugLog { "specs are ${specs.screenWidth}x${specs.screenHeight}, scale ${specs.pxScale}" }
 
-        val debouncer = Debouncer()
-//        observer = NSNotificationCenter.defaultCenter
-//            .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
-//                debouncer.execute {
-//                    prefs = readPrefValues()
-//                }
-//            }
-
         debugLog { "initing ComposeScreenSaverView 3" }
         val ww = screenSaverView.window
-        debugLog { "window is $ww"}
+        debugLog { "window is $ww" }
 
         NSApplication.sharedApplication.windows.forEach { window ->
             debugLog { "NSApplication has window $window" }
         }
-        debugLog { "Key window ${NSApplication.sharedApplication.keyWindow}"}
-        debugLog { "Main window ${NSApplication.sharedApplication.mainWindow}"}
-
         debugLog { "before density" }
-//        val dens = 2f // ww!!.backingScaleFactor.toFloat()
         val dens = ww!!.backingScaleFactor.toFloat()
         debugLog { "after density" }
         debugLog { "density is $dens" }
@@ -108,12 +96,14 @@ class ComposeScreenSaverView(
 
     override fun dispose() {
         debugLog { "disposing ComposeScreenSaverView" }
-        observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
         composeWindow?.dispose()
 
-        observer = null
         composeView = null
         composeWindow = null
+    }
+
+    override fun prefsChanged() {
+        prefs = readPrefValues()
     }
 
     override fun animateOneFrame() = Unit
