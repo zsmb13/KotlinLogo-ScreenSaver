@@ -6,6 +6,7 @@ import config.GlobalPreferences
 import imagesets.imageSets
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSView
+import platform.CoreServices.nsvErr
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
@@ -19,28 +20,37 @@ class AppKitScreenSaverView(
 ) : ScreenSaverImpl {
     val specs = ScreenSpecs(screenSaverView)
 
-    val view: NSView = run {
-        NSView(
-            NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight)
-        )
-    }
+    var view: NSView? = null
 
     private var logos: List<BouncingLogo> = emptyList()
 
-    init {
-        debugLog { "LogoScreenSaverView inited ($this)" }
+    override fun start() {
+        debugLog { "LogoScreenSaverView initing ($this)" }
         setupUserDefaultsObserver()
+
+        view?.removeFromSuperview()
+        val nsView = NSView(NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight))
+        view = nsView
+        screenSaverView.addSubview(nsView)
+        debugLog { "Created and attached NSView to screenSaverView, $nsView, ${specs.screenWidth}x${specs.screenHeight}" }
+
         initLogos()
-        screenSaverView.addSubview(view)
     }
 
     override fun animateOneFrame() {
+//        debugLog { "animateOneFrame in AppKitScreenSaverView, ${logos.size} logos in list, $view, ${view?.window}" }
         logos.forEach(BouncingLogo::animateFrame)
         logos.forEach(BouncingLogo::draw)
     }
 
     private fun initLogos() {
         disposeLogos()
+
+        val view = view
+        if (view == null) {
+            debugLog { "View is null, can't initialize logos" }
+            return
+        }
 
         val imageLoader = ImageLoader(specs)
         logos = List(GlobalPreferences.LOGO_COUNT) {
@@ -66,7 +76,8 @@ class AppKitScreenSaverView(
     override fun dispose() {
         removeUserDefaultsObserver()
         disposeLogos()
-        view.removeFromSuperview()
+        view?.removeFromSuperview()
+        view = null
     }
 
     var observer: NSObjectProtocol? = null

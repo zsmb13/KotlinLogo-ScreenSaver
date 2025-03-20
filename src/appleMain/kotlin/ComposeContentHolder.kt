@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkikoRenderDelegate
-import platform.AppKit.NSBackingStoreBuffered
 import platform.AppKit.NSTrackingActiveAlways
 import platform.AppKit.NSTrackingActiveInKeyWindow
 import platform.AppKit.NSTrackingArea
@@ -24,20 +23,13 @@ import platform.AppKit.NSTrackingMouseEnteredAndExited
 import platform.AppKit.NSTrackingMouseMoved
 import platform.AppKit.NSView
 import platform.AppKit.NSWindow
-import platform.AppKit.NSWindowStyleMaskClosable
-import platform.AppKit.NSWindowStyleMaskMiniaturizable
-import platform.AppKit.NSWindowStyleMaskResizable
-import platform.AppKit.NSWindowStyleMaskTitled
 import platform.Foundation.NSMakeRect
 
-interface WindowScope {
-    val window: NSWindow
-}
 
-class DisposableComposeWindow(
-    title: String = "MyComposeWindow",
+class ComposeContentHolder(
+    private val density: Float,
     size: DpSize = DpSize(800.dp, 600.dp),
-) : WindowScope {
+) {
     private val skiaLayer = SkiaLayer()
     private val scene = CanvasLayersComposeScene(
         coroutineContext = Dispatchers.Main,
@@ -51,25 +43,14 @@ class DisposableComposeWindow(
         }
     }
 
-    private val windowStyle =
-        NSWindowStyleMaskTitled or
-            NSWindowStyleMaskMiniaturizable or
-            NSWindowStyleMaskClosable or
-            NSWindowStyleMaskResizable
-
-    override val window = object : NSWindow(
-        contentRect = NSMakeRect(
+    val view = object : NSView(
+        NSMakeRect(
             x = 0.0,
             y = 0.0,
             w = size.width.value.toDouble(),
             h = size.height.value.toDouble()
-        ),
-        styleMask = windowStyle,
-        backing = NSBackingStoreBuffered,
-        defer = true
-    ) {}
-
-    private val view = object : NSView(window.frame) {
+        )
+    ) {
         private var trackingArea : NSTrackingArea? = null
         override fun wantsUpdateLayer() = true
         override fun acceptsFirstResponder() = true
@@ -92,21 +73,14 @@ class DisposableComposeWindow(
         }
     }
 
-    init {
-        window.title = title
-        window.contentView = view
-
-        skiaLayer.renderDelegate = renderDelegate
-        skiaLayer.attachTo(view)
-
-        scene.density = Density(window.backingScaleFactor.toFloat())
-    }
-
     private var isDisposed = false
 
     fun setContent(
-        content: @Composable WindowScope.() -> Unit,
+        content: @Composable () -> Unit,
     ) {
+        skiaLayer.renderDelegate = renderDelegate
+        skiaLayer.attachTo(view)
+        scene.density = Density(density)
         scene.setContent {
             content()
         }
@@ -116,7 +90,7 @@ class DisposableComposeWindow(
         if (isDisposed) return
         skiaLayer.detach()
         scene.close()
+        view.removeFromSuperview()
         isDisposed = true
-        window.close()
     }
 }

@@ -59,25 +59,29 @@ private fun dynamicMainFun() {
 
 //    activeImpl = AppKitScreenSaverView(contentView, false)
 //    contentView.addSubview(activeImpl!!.view)
-    setImpl(contentView)
+//    setImpl(contentView)
 
     window.center()
     window.makeKeyAndOrderFront(null)
 
     GlobalScope.launch(Dispatchers.Main) {
         while (true) {
-            delay(1000.milliseconds / 60)
+            delay(1000.milliseconds / 10) // todo /60
             activeImpl?.animateOneFrame()
         }
     }
 
-    GlobalScope.launch(Dispatchers.Main) {
-        while (true) {
-            delay(2.seconds)
-            composeImpl = !composeImpl
-            setImpl(contentView)
-        }
-    }
+//    GlobalScope.launch(Dispatchers.Main) {
+//        while (true) {
+//            delay(2.seconds)
+//            composeImpl = !composeImpl
+//            setImpl(contentView)
+//        }
+//    }
+    debugLog { "Doing a single init" }
+
+    composeImpl = false
+    setImpl(contentView)
 
     NSApp?.run()
 }
@@ -88,19 +92,20 @@ private fun setImpl(contentView: NSView) {
 
     // Clean up old implementation if it exists
     disposing?.let { impl ->
-        debugLog { "Cleaning up old implementation: ${impl::class.simpleName}" }
+        debugLog { "Main: Cleaning up old implementation: ${impl::class.simpleName}" }
         // Additional cleanup if needed
         impl.dispose()
     }
 
     // Create and initialize new implementation
     activeImpl = if (composeImpl) {
-        debugLog { "Switching to Compose implementation" }
+        debugLog { "Main: Switching to Compose implementation" }
         ComposeScreenSaverView(contentView)
     } else {
-        debugLog { "Switching to AppKit implementation" }
+        debugLog { "Main: Switching to AppKit implementation" }
         AppKitScreenSaverView(contentView)
     }
+    activeImpl?.start()
 }
 
 @OptIn(ExperimentalForeignApi::class)

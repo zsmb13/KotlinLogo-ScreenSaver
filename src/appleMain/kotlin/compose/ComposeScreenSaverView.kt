@@ -1,6 +1,6 @@
 package compose
 
-import DisposableComposeWindow
+import ComposeContentHolder
 import ScreenSaverImpl
 import ScreenSpecs
 import androidx.compose.runtime.getValue
@@ -14,7 +14,7 @@ import config.GlobalPreferences
 import imagesets.imageSets
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AppKit.NSView
-import platform.Foundation.NSMakeRect
+import platform.AppKit.NSApplication
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.darwin.NSObjectProtocol
@@ -37,11 +37,19 @@ class ComposeScreenSaverView(
     var composeView: NSView? = null
     var observer: NSObjectProtocol? = null
 
-    var composeWindow: DisposableComposeWindow? = null
+    var composeWindow: ComposeContentHolder? = null
 
-    init {
+    override fun start() {
+        // TODO REMOVE LATER
+        GlobalPreferences.CUSTOM_FOLDER = "/Users/zsmb/screensaver-images"
+
+        debugLog { "initing ComposeScreenSaverView" }
+
         val specs = ScreenSpecs(screenSaverView)
         var prefs by mutableStateOf(readPrefValues())
+
+        debugLog { "initing ComposeScreenSaverView 2" }
+        debugLog { "specs are ${specs.screenWidth}x${specs.screenHeight}, scale ${specs.pxScale}" }
 
         val debouncer = Debouncer()
         observer = NSNotificationCenter.defaultCenter
@@ -51,20 +59,44 @@ class ComposeScreenSaverView(
                 }
             }
 
-        composeWindow = DisposableComposeWindow(
+        debugLog { "initing ComposeScreenSaverView 3" }
+        val ww = screenSaverView.window
+        debugLog { "window is $ww"}
+
+        NSApplication.sharedApplication.windows.forEach { window ->
+            debugLog { "NSApplication has window $window" }
+        }
+        debugLog { "Key window ${NSApplication.sharedApplication.keyWindow}"}
+        debugLog { "Main window ${NSApplication.sharedApplication.mainWindow}"}
+
+        // TODO: continue work from here.
+        //       the core issue is that screenSaverView.window is still null at this point, so we can't
+        //       use it to grab the density. the screenSaverView itself is valid though, and we can already
+        //       nest views under it if we want to - it'll be attached in a bit.
+
+        debugLog { "before density" }
+        val dens = 2f // ww!!.backingScaleFactor.toFloat()
+        debugLog { "after density" }
+        debugLog { "density is $dens" }
+        val composeContentHolder = ComposeContentHolder(
+            density = dens,
             size = DpSize(specs.screenWidth.dp, specs.screenHeight.dp),
         )
-        composeWindow!!.setContent {
-            if (composeView == null && window.contentView != null) {
-                composeView = window.contentView
-                debugLog { "Set composeView: $composeView" }
-            } else {
-                debugLog { "Not setting composeView: $composeView, ${window.contentView}" }
-            }
+        composeWindow = composeContentHolder
+
+        screenSaverView.addSubview(composeContentHolder.view)
+
+        composeView = composeContentHolder.view
+
+        composeContentHolder.setContent {
+            // Don't touch this, removing it leads to a compilation error somehow
+            // https://youtrack.jetbrains.com/issue/KT-76037/
+            observer
 
             val density = LocalDensity.current
             val imageSet = remember(prefs) {
-                imageSets[prefs.logoSet]
+//                imageSets[prefs.logoSet]
+                imageSets[2]
             }
             val imgLoader = remember(prefs, density, specs) {
                 ComposeImageLoader(
@@ -74,27 +106,15 @@ class ComposeScreenSaverView(
             }
             ScreenSaverContent(prefs, imageSet, imgLoader, specs)
         }
-
-        val cv = composeView
-        if (cv != null) {
-            debugLog { "Attaching $cv to screen saver" }
-            cv.frame = NSMakeRect(0.0, 0.0, specs.screenWidth, specs.screenHeight)
-            screenSaverView.addSubview(cv)
-            debugLog { "Attached $cv to screen saver" }
-        } else {
-            debugLog { "Can't attach to screen saver" }
-        }
     }
 
     override fun dispose() {
-        composeWindow?.dispose()
-        composeWindow = null
-
         observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
-        observer = null
+        composeWindow?.dispose()
 
-        composeView?.removeFromSuperview()
+        observer = null
         composeView = null
+        composeWindow = null
     }
 
     override fun animateOneFrame() = Unit
