@@ -24,6 +24,7 @@ import platform.AppKit.NSTrackingMouseMoved
 import platform.AppKit.NSView
 import platform.AppKit.NSWindow
 import platform.Foundation.NSMakeRect
+import util.debugLog
 
 
 class ComposeContentHolder(
@@ -87,10 +88,16 @@ class ComposeContentHolder(
     }
 
     fun dispose() {
-        if (isDisposed) return
-        skiaLayer.detach()
+        if (isDisposed) {
+            debugLog { "dispose failed, already disposed!" }
+            return
+        }
         scene.close()
+        debugLog { "closed scene" }
+        skiaLayer.detach()
+        debugLog { "detached skiaLayer" }
         view.removeFromSuperview()
+        debugLog { "removed from super" }
         isDisposed = true
     }
 }

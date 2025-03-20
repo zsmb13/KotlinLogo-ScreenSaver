@@ -52,12 +52,12 @@ class ComposeScreenSaverView(
         debugLog { "specs are ${specs.screenWidth}x${specs.screenHeight}, scale ${specs.pxScale}" }
 
         val debouncer = Debouncer()
-        observer = NSNotificationCenter.defaultCenter
-            .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
-                debouncer.execute {
-                    prefs = readPrefValues()
-                }
-            }
+//        observer = NSNotificationCenter.defaultCenter
+//            .addObserverForName(NSUserDefaultsDidChangeNotification, null, null) {
+//                debouncer.execute {
+//                    prefs = readPrefValues()
+//                }
+//            }
 
         debugLog { "initing ComposeScreenSaverView 3" }
         val ww = screenSaverView.window
@@ -69,13 +69,9 @@ class ComposeScreenSaverView(
         debugLog { "Key window ${NSApplication.sharedApplication.keyWindow}"}
         debugLog { "Main window ${NSApplication.sharedApplication.mainWindow}"}
 
-        // TODO: continue work from here.
-        //       the core issue is that screenSaverView.window is still null at this point, so we can't
-        //       use it to grab the density. the screenSaverView itself is valid though, and we can already
-        //       nest views under it if we want to - it'll be attached in a bit.
-
         debugLog { "before density" }
-        val dens = 2f // ww!!.backingScaleFactor.toFloat()
+//        val dens = 2f // ww!!.backingScaleFactor.toFloat()
+        val dens = ww!!.backingScaleFactor.toFloat()
         debugLog { "after density" }
         debugLog { "density is $dens" }
         val composeContentHolder = ComposeContentHolder(
@@ -88,10 +84,11 @@ class ComposeScreenSaverView(
 
         composeView = composeContentHolder.view
 
+        debugLog { "COMPOSE_ONCE: setContent" }
         composeContentHolder.setContent {
             // Don't touch this, removing it leads to a compilation error somehow
             // https://youtrack.jetbrains.com/issue/KT-76037/
-            observer
+//            observer
 
             val density = LocalDensity.current
             val imageSet = remember(prefs) {
@@ -104,11 +101,13 @@ class ComposeScreenSaverView(
                     targetArea = (prefs.logoSize * specs.pxScale).pow(2).toFloat(),
                 )
             }
+            debugLog { "COMPOSE_ONCE: ScreenSaverContent call" }
             ScreenSaverContent(prefs, imageSet, imgLoader, specs)
         }
     }
 
     override fun dispose() {
+        debugLog { "disposing ComposeScreenSaverView" }
         observer?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
         composeWindow?.dispose()
 

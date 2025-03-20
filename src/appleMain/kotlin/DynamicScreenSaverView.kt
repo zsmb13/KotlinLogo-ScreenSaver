@@ -2,12 +2,17 @@ import appkit.AppKitScreenSaverView
 import compose.ComposeScreenSaverView
 import config.GlobalPreferences
 import config.KotlinLogosPrefController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import platform.AppKit.NSWindow
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaultsDidChangeNotification
 import platform.ScreenSaver.ScreenSaverView
 import util.Debouncer
 import util.debugLog
+import kotlin.time.Duration.Companion.seconds
 
 class DynamicScreenSaverView : KotlinScreenSaverView() {
     private var activeImpl: ScreenSaverImpl? = null
@@ -22,6 +27,15 @@ class DynamicScreenSaverView : KotlinScreenSaverView() {
         debugLog { "screenSaverView.window=${screenSaverView.window}" }
         setupUserDefaultsObserver()
         switchImplementation()
+
+        // "demo mode"
+        GlobalScope.launch(Dispatchers.Main) {
+            while (true) {
+                delay(4.seconds)
+                GlobalPreferences.USE_COMPOSE = !useCompose
+                switchImplementation()
+            }
+        }
     }
 
     override fun animateOneFrame() {
@@ -31,6 +45,10 @@ class DynamicScreenSaverView : KotlinScreenSaverView() {
     var isAnimating = false
 
     override fun startAnimation() {
+        if (isAnimating) {
+            debugLog { "ignoring START ANIM" }
+            return
+        }
         debugLog { "START ANIMATION CALLBACK, screensaver is $view, its window is ${view.window}" }
         isAnimating = true
         activeImpl?.start()

@@ -57,31 +57,26 @@ private fun dynamicMainFun() {
     window.title = "Dynamic screen saver"
     val contentView = window.contentView!!
 
-//    activeImpl = AppKitScreenSaverView(contentView, false)
-//    contentView.addSubview(activeImpl!!.view)
-//    setImpl(contentView)
+    activeImpl = AppKitScreenSaverView(contentView)
+    setImpl(contentView)
 
     window.center()
     window.makeKeyAndOrderFront(null)
 
     GlobalScope.launch(Dispatchers.Main) {
         while (true) {
-            delay(1000.milliseconds / 10) // todo /60
+            delay(1000.milliseconds / 60)
             activeImpl?.animateOneFrame()
         }
     }
 
-//    GlobalScope.launch(Dispatchers.Main) {
-//        while (true) {
-//            delay(2.seconds)
-//            composeImpl = !composeImpl
-//            setImpl(contentView)
-//        }
-//    }
-    debugLog { "Doing a single init" }
-
-    composeImpl = false
-    setImpl(contentView)
+    GlobalScope.launch(Dispatchers.Main) {
+        while (true) {
+            delay(2.seconds)
+            composeImpl = !composeImpl
+            setImpl(contentView)
+        }
+    }
 
     NSApp?.run()
 }
