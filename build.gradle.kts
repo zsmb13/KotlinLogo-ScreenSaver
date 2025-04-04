@@ -1,11 +1,10 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
-    kotlin("multiplatform") version "2.1.10"
-}
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
@@ -21,14 +20,41 @@ kotlin {
         }
     }
 
-    sourceSets {
-        macosMain.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    jvm {
+        binaries {
+            executable {
+                mainClass.set("MainKt")
+                val folder: Any? = properties["customfolder"]
+                if (folder is String) {
+                    applicationDefaultJvmArgs = listOf("-Dcustomfolder=$folder")
+                }
+            }
         }
     }
-}
 
-tasks.wrapper {
-    gradleVersion = "8.1.1"
-    distributionType = Wrapper.DistributionType.ALL
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.ui)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.components.resources)
+
+            implementation(libs.kotlinx.io.core)
+            implementation(libs.kotlinx.coroutines.core)
+        }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
+        nativeMain.dependencies {
+            implementation(libs.kotlin.reflect)
+        }
+    }
+
+    targets.forEach {
+        it.binaries {
+            executable {
+                entryPoint = "main"
+            }
+        }
+    }
 }

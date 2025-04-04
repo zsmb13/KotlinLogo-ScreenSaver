@@ -2,11 +2,12 @@ import ScreenSaver
 import KotlinLogo
 
 class KotlinLogosView: ScreenSaverView {
-    let kotlinScreenSaverView = KotlinScreenSaverViewKt.create()
+    var kotlinScreenSaverView: KotlinScreenSaverView!
 
     override init?(frame: NSRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
-        kotlinScreenSaverView.doInit(screenSaverView: self, isPreview: isPreview)
+        animationTimeInterval = 1 / 60.0
+        kotlinScreenSaverView = KotlinScreenSaverViewKt.create(screenSaverView: self, isPreview: isPreview)
         DistributedNotificationCenter.default.addObserver(
             self,
             selector: #selector(KotlinLogosView.willStop(_:)),
@@ -30,6 +31,11 @@ class KotlinLogosView: ScreenSaverView {
     override func animateOneFrame() {
         super.animateOneFrame()
         kotlinScreenSaverView.animateOneFrame()
+    }
+
+    override func startAnimation() {
+        super.startAnimation()
+        kotlinScreenSaverView.startAnimation()
     }
 
     override var hasConfigureSheet: Bool {
