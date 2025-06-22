@@ -50,7 +50,8 @@ fun main() {
                             demoMode = true,
                             debugMode = false,
                         )
-                        override var callback: (ScreenSaverParams) -> Unit = {}
+
+                        override fun addCallback(cb: (ScreenSaverParams) -> Unit) {}
                     }
                 }
 
