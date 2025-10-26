@@ -18,9 +18,12 @@ class KotlinLogosView: ScreenSaverView {
 
     @objc func willStop(_ aNotification: Notification) {
         if (!isPreview) {
-            // Alternative impl
-            // self.removeFromSuperview()
-            NSApplication.shared.terminate(nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { // 1 second from now
+                NSApplication.shared.terminate(nil)
+
+                // Alternative impl
+                // self.removeFromSuperview()
+            }
         }
     }
 
