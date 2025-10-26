@@ -9,7 +9,6 @@ import compose.ScreenSaverContent
 import imagesets.CustomFolderImageSet
 import imagesets.UImageLoader
 import imagesets.add
-import org.jetbrains.compose.reload.DevelopmentEntryPoint
 
 
 fun main() {
@@ -29,7 +28,6 @@ fun main() {
             state = windowState,
             alwaysOnTop = true,
         ) {
-            DevelopmentEntryPoint {
                 val specs = remember(windowState.size) {
                     ScreenSpecs(
                         screenWidth = windowState.size.width.value.toDouble(),
@@ -50,7 +48,8 @@ fun main() {
                             demoMode = true,
                             debugMode = false,
                         )
-                        override var callback: (ScreenSaverParams) -> Unit = {}
+
+                        override fun addCallback(cb: (ScreenSaverParams) -> Unit) {}
                     }
                 }
 
@@ -65,7 +64,6 @@ fun main() {
                     imgLoader = uImageLoader,
                     specs = specs,
                 )
-            }
         }
     }
 }
