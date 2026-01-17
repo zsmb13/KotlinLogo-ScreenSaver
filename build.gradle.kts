@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
+    alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -9,6 +10,8 @@ plugins {
 
 kotlin {
     val xcf = XCFramework("KotlinLogo")
+
+    applyDefaultHierarchyTemplate()
 
     val targets = listOf(macosX64(), macosArm64())
     targets.forEach { target ->
@@ -19,6 +22,8 @@ kotlin {
             xcf.add(this)
         }
     }
+
+    androidTarget()
 
     jvm {
         binaries {
@@ -42,8 +47,18 @@ kotlin {
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.coroutines.core)
         }
+
+        val nonAndroidMain by creating {
+            dependsOn(commonMain.get())
+        }
+        jvmMain.get().dependsOn(nonAndroidMain)
+        appleMain.get().dependsOn(nonAndroidMain)
+
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
+        }
+        androidMain.dependencies {
+            implementation(libs.mozartwallpapers)
         }
         nativeMain.dependencies {
             implementation(libs.kotlin.reflect)
@@ -56,5 +71,20 @@ kotlin {
                 entryPoint = "main"
             }
         }
+    }
+}
+
+android {
+    namespace = "co.zsmb.kotlinlogos"
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = "co.zsmb.kotlinlogos"
+        targetSdk = 36
+        minSdk = 24
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
